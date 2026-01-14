@@ -825,6 +825,7 @@ run_section_1_1_checks() {
             return
         fi
 
+        # 检查目录下所有文件的权限（不限于 .conf 文件）
         while IFS= read -r -d '' file; do
             found_files=1
             if ! check_file_permissions "$file" 644; then
@@ -832,7 +833,7 @@ run_section_1_1_checks() {
                 print_result "FAIL" "Network config file $file permissions are not 644 or more restrictive" "1.1.9"
                 return
             fi
-        done < <(find "$dir" -type f -name "*.conf" -print0 2>/dev/null)
+        done < <(find "$dir" -type f -print0 2>/dev/null)
 
         if [[ $found_files -eq 0 ]]; then
             print_result "WARN" "No network configuration files found in $dir" "1.1.9"
@@ -852,6 +853,7 @@ run_section_1_1_checks() {
             return
         fi
 
+        # 检查目录下所有文件的所有权（不限于 .conf 文件）
         while IFS= read -r -d '' file; do
             found_files=1
             if ! check_file_ownership "$file" "root" "root"; then
@@ -859,7 +861,7 @@ run_section_1_1_checks() {
                 print_result "FAIL" "Network config file $file ownership is not root:root" "1.1.10"
                 return
             fi
-        done < <(find "$dir" -type f -name "*.conf" -print0 2>/dev/null)
+        done < <(find "$dir" -type f -print0 2>/dev/null)
 
         if [[ $found_files -eq 0 ]]; then
             print_result "WARN" "No network configuration files found in $dir" "1.1.10"
