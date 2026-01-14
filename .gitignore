@@ -1,0 +1,30 @@
+# ================================
+# CIS Kubernetes Benchmark - Git Ignore
+# ================================
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Log files
+*.log
+*.out
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Backup files
+*.bak
+*.backup
+
+# OS specific
+Thumbs.db
+.DS_Store
+
+# ================================
