@@ -282,7 +282,7 @@ check_argument_value() {
 
     # Try to extract the argument value
     local actual_value
-    actual_value=$(echo "$process_info" | grep -oP "(?<=${arg_name}=)[^ ]+" 2>/dev/null || echo "$process_info" | grep -o "${arg_name}[^ ]*" | cut -d'=' -f2)
+    actual_value=$(echo "$process_info" | grep -oP "(?<=${arg_name}=)[^ ]+" 2>/dev/null || echo "$process_info" | grep -o -- "${arg_name}[^ ]*" | cut -d'=' -f2)
 
     if [[ "$actual_value" == "$expected_value" ]]; then
         return 0
@@ -310,7 +310,7 @@ check_argument_in_list() {
     local process_info=$3
 
     local actual_value
-    actual_value=$(echo "$process_info" | grep -oP "(?<=${arg_name}=)[^ ]+" 2>/dev/null || echo "$process_info" | grep -o "${arg_name}[^ ]*" | cut -d'=' -f2)
+    actual_value=$(echo "$process_info" | grep -oP "(?<=${arg_name}=)[^ ]+" 2>/dev/null || echo "$process_info" | grep -o -- "${arg_name}[^ ]*" | cut -d'=' -f2)
 
     # Convert to array and check
     local IFS=','

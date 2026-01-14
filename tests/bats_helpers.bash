@@ -46,57 +46,19 @@ mock_kubectl() {
         echo "kube-system"
         echo "kube-public"
     elif [[ "$args" =~ "get networkpolicy" ]]; then
-        # 返回空，表示没有 network policy
         return 0
     elif [[ "$args" =~ "get clusterroles" ]]; then
-        echo "NAME"
         echo "cluster-admin"
         echo "admin"
         echo "edit"
         echo "view"
     elif [[ "$args" =~ "get clusterrolebindings" ]]; then
-        echo "NAME"
         echo "cluster-admin-binding"
     elif [[ "$args" =~ "get psp" ]]; then
-        # PSP 已废弃
         return 0
     else
         return 0
     fi
-}
-
-# Mock stat 命令输出 (macOS)
-mock_stat_macos() {
-    local file=$1
-    local perms=$2
-    local user=$3
-    local group=$4
-
-    case "$OSTYPE" in
-        darwin*)
-            echo "$perms"
-            echo "$user"
-            echo "$group"
-            ;;
-        *)
-            echo "$perms"
-            echo "$user"
-            echo "$group"
-            ;;
-    esac
-}
-
-# Mock 文件存在检查
-mock_file_exists() {
-    local file=$1
-    case "$file" in
-        "/etc/kubernetes/manifests/kube-apiserver.yaml"|""/var/lib/kubelet/config.yaml"*)
-            return 0
-            ;;
-        *)
-            return 1
-            ;;
-    esac
 }
 
 #--------------------------------------------------------------------------------
@@ -142,30 +104,30 @@ teardown_test_env() {
 
 # 断言包含
 assert_contains() {
-    local haystack="$1"
-    local needle="$2"
+    local haystack=$1
+    local needle=$2
     [[ "$haystack" == *"$needle"* ]] || {
-        echo "Expected '$haystack' to contain '$needle'"
+        echo "String does not contain expected value"
         return 1
     }
 }
 
 # 断言相等
 assert_equals() {
-    local expected="$1"
-    local actual="$2"
+    local expected=$1
+    local actual=$2
     [[ "$expected" == "$actual" ]] || {
-        echo "Expected '$expected', got '$actual'"
+        echo "Values are not equal"
         return 1
     }
 }
 
 # 断言匹配正则
 assert_match() {
-    local string="$1"
-    local pattern="$2"
+    local string=$1
+    local pattern=$2
     [[ "$string" =~ $pattern ]] || {
-        echo "Expected '$string' to match '$pattern'"
+        echo "String does not match pattern"
         return 1
     }
 }
@@ -173,10 +135,8 @@ assert_match() {
 # 断言命令成功
 assert_success() {
     local status=$1
-    local output=${2:-}
     [[ $status -eq 0 ]] || {
-        echo "Command failed with status $status"
-        [[ -n "$output" ]] && echo "Output: $output"
+        echo "Command failed"
         return 1
     }
 }
@@ -185,7 +145,7 @@ assert_success() {
 assert_failure() {
     local status=$1
     [[ $status -ne 0 ]] || {
-        echo "Expected command to fail, but it succeeded"
+        echo "Command should have failed"
         return 1
     }
 }
@@ -193,6 +153,6 @@ assert_failure() {
 #--------------------------------------------------------------------------------
 #  导出函数
 #--------------------------------------------------------------------------------
-export -f mock_ps mock_kubectl mock_stat_macos mock_file_exists
+export -f mock_ps mock_kubectl
 export -f create_test_file setup_test_env teardown_test_env
 export -f assert_contains assert_equals assert_match assert_success assert_failure
