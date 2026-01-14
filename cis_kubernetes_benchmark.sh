@@ -11,8 +11,16 @@
 # ============================================================================
 # 使用方法
 # ============================================================================
-#   sudo ./cis_kubernetes_benchmark.sh master   # 审计 Master 节点
-#   sudo ./cis_kubernetes_benchmark.sh worker  # 审计 Worker 节点
+#   基本用法:
+#     sudo ./cis_kubernetes_benchmark.sh master   # 审计 Master 节点
+#     sudo ./cis_kubernetes_benchmark.sh worker  # 审计 Worker 节点
+#
+#   输出过滤:
+#     sudo ./cis_kubernetes_benchmark.sh master --only-pass    # 只显示 PASS
+#     sudo ./cis_kubernetes_benchmark.sh master --only-warn    # 只显示 WARN
+#     sudo ./cis_kubernetes_benchmark.sh master --only-fail    # 只显示 FAIL
+#     sudo ./cis_kubernetes_benchmark.sh master --only-error   # 只显示 FAIL 和 WARN
+#     sudo ./cis_kubernetes_benchmark.sh master --quiet        # 安静模式，只显示汇总
 #
 # ============================================================================
 # 三层检查机制
@@ -33,6 +41,7 @@
 #   v1.0.0 - 初始版本，基于 CIS v1.12.0 标准实现
 #   v1.1.0 - 添加三层检查框架
 #   v1.2.0 - 添加 Container Runtime 检查和增强 Policies 检查
+#   v1.3.0 - 添加输出过滤功能 (--only-pass, --only-warn, --only-fail, --only-error, --quiet)
 #
 # ============================================================================
 # 维护说明
@@ -45,6 +54,15 @@
 #   5. 测试验证所有检查项
 #
 ################################################################################
+
+#-----------------------------#
+#  输出过滤选项
+#-----------------------------#
+FILTER_MODE="all"    # 过滤模式: all, pass, warn, fail, error, quiet
+SHOW_PASS=true      # 是否显示 PASS
+SHOW_WARN=true      # 是否显示 WARN
+SHOW_FAIL=true      # 是否显示 FAIL
+QUIET_MODE=false    # 安静模式（只显示汇总）
 
 #-----------------------------#
 #  颜色定义 - 用于终端输出高亮
@@ -69,34 +87,69 @@ TOTAL_CHECKS=0    # 总检查数量
 
 #--------------------------------------------------------------------------------
 #  函数: print_result
-#  功能: 打印带颜色的检查结果
+#  功能: 打印带颜色的检查结果（支持输出过滤）
 #  参数:
 #    $1 - status: 状态 (PASS/FAIL/WARN)
 #    $2 - message: 结果描述信息
 #    $3 - check_id: 检查项编号 (如 "1.1.1")
 #  返回: 无
+#  过滤选项:
+#    --only-pass   : 只显示 PASS 结果
+#    --only-warn   : 只显示 WARN 结果
+#    --only-fail   : 只显示 FAIL 结果
+#    --only-error  : 只显示 FAIL 和 WARN 结果
+#    --quiet       : 安静模式，只显示汇总报告
 #--------------------------------------------------------------------------------
 print_result() {
     local status=$1
     local message=$2
     local check_id=$3
 
+    # 始终更新计数器（即使在安静模式下）
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+
+    # 安静模式：不输出任何检查结果
+    if [[ "$QUIET_MODE" == "true" ]]; then
+        case $status in
+            "PASS") PASS_COUNT=$((PASS_COUNT + 1)) ;;
+            "FAIL") FAIL_COUNT=$((FAIL_COUNT + 1)) ;;
+            "WARN") WARN_COUNT=$((WARN_COUNT + 1)) ;;
+        esac
+        return
+    fi
+
+    # 根据过滤模式决定是否输出
+    local should_print=false
 
     case $status in
         "PASS")
-            echo -e "${GREEN}[PASS]${NC} $check_id: $message"
             PASS_COUNT=$((PASS_COUNT + 1))
+            [[ "$SHOW_PASS" == "true" ]] && should_print=true
             ;;
         "FAIL")
-            echo -e "${RED}[FAIL]${NC} $check_id: $message"
             FAIL_COUNT=$((FAIL_COUNT + 1))
+            [[ "$SHOW_FAIL" == "true" ]] && should_print=true
             ;;
         "WARN")
-            echo -e "${YELLOW}[WARN]${NC} $check_id: $message"
             WARN_COUNT=$((WARN_COUNT + 1))
+            [[ "$SHOW_WARN" == "true" ]] && should_print=true
             ;;
     esac
+
+    # 输出结果
+    if [[ "$should_print" == "true" ]]; then
+        case $status in
+            "PASS")
+                echo -e "${GREEN}[PASS]${NC} $check_id: $message"
+                ;;
+            "FAIL")
+                echo -e "${RED}[FAIL]${NC} $check_id: $message"
+                ;;
+            "WARN")
+                echo -e "${YELLOW}[WARN]${NC} $check_id: $message"
+                ;;
+        esac
+    fi
 }
 
 # Check if file exists
@@ -3012,20 +3065,99 @@ print_summary() {
 #  Main Script
 #-----------------------------#
 main() {
+    # 解析命令行参数
+    local node_type=""
+    local filter_args=()
+
+    # 遍历所有参数
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --only-pass)
+                SHOW_PASS=true
+                SHOW_WARN=false
+                SHOW_FAIL=false
+                FILTER_MODE="pass"
+                shift
+                ;;
+            --only-warn)
+                SHOW_PASS=false
+                SHOW_WARN=true
+                SHOW_FAIL=false
+                FILTER_MODE="warn"
+                shift
+                ;;
+            --only-fail)
+                SHOW_PASS=false
+                SHOW_WARN=false
+                SHOW_FAIL=true
+                FILTER_MODE="fail"
+                shift
+                ;;
+            --only-error)
+                SHOW_PASS=false
+                SHOW_WARN=true
+                SHOW_FAIL=true
+                FILTER_MODE="error"
+                shift
+                ;;
+            --quiet|-q)
+                QUIET_MODE=true
+                shift
+                ;;
+            master|worker)
+                node_type=$1
+                shift
+                ;;
+            -h|--help|help)
+                show_help
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}[ERROR]${NC} Unknown option: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+
+    # 检查是否指定了节点类型
+    if [[ -z "$node_type" ]]; then
+        echo -e "${RED}[ERROR]${NC} Missing node type argument"
+        show_help
+        exit 1
+    fi
+
     # Check if running as root
     if [[ $EUID -ne 0 ]]; then
         echo -e "${RED}[ERROR]${NC} This script must be run as root"
         exit 1
     fi
 
-    # Check arguments
-    if [[ $# -eq 0 ]]; then
-        echo "Usage: $0 [master|worker]"
-        exit 1
+    # 显示过滤模式信息（非安静模式）
+    if [[ "$QUIET_MODE" == "false" ]]; then
+        case $FILTER_MODE in
+            pass)
+                echo -e "${BLUE}=== 输出过滤模式: 只显示 PASS 结果 ===${NC}\n"
+                ;;
+            warn)
+                echo -e "${BLUE}=== 输出过滤模式: 只显示 WARN 结果 ===${NC}\n"
+                ;;
+            fail)
+                echo -e "${BLUE}=== 输出过滤模式: 只显示 FAIL 结果 ===${NC}\n"
+                ;;
+            error)
+                echo -e "${BLUE}=== 输出过滤模式: 只显示 FAIL 和 WARN 结果 ===${NC}\n"
+                ;;
+            quiet)
+                # 安静模式不显示
+                ;;
+            *)
+                # 默认显示所有
+                ;;
+        esac
     fi
 
-    local node_type=$1
-
+    # 根据节点类型执行检查
     case $node_type in
         master)
             run_master_checks
@@ -3034,12 +3166,76 @@ main() {
             run_worker_checks
             ;;
         *)
-            echo -e "${RED}[ERROR]${NC} Invalid argument. Use 'master' or 'worker'"
+            echo -e "${RED}[ERROR]${NC} Invalid node type. Use 'master' or 'worker'"
             exit 1
             ;;
     esac
 
+    # 打印汇总报告
     print_summary
+}
+
+#--------------------------------------------------------------------------------
+#  函数: show_help
+#  功能: 显示帮助信息
+#  参数: 无
+#  返回: 无
+#--------------------------------------------------------------------------------
+show_help() {
+    cat << EOF
+${BLUE}CIS Kubernetes Benchmark v1.12.0 审计脚本 (v1.3.0)${NC}
+
+${YELLOW}用法:${NC}
+  sudo $0 [master|worker] [选项]
+
+${YELLOW}参数:${NC}
+  master          审计 Master 节点
+  worker          审计 Worker 节点
+
+${YELLOW}输出过滤选项:${NC}
+  --only-pass     只显示 PASS (通过) 结果
+  --only-warn     只显示 WARN (警告) 结果
+  --only-fail     只显示 FAIL (失败) 结果
+  --only-error    只显示 FAIL 和 WARN 结果
+  --quiet, -q     安静模式，只显示汇总报告
+
+${YELLOW}示例:${NC}
+  # 审计 Master 节点（显示所有结果）
+  sudo $0 master
+
+  # 审计 Worker 节点（显示所有结果）
+  sudo $0 worker
+
+  # 只显示失败项
+  sudo $0 master --only-fail
+
+  # 只显示警告项
+  sudo $0 worker --only-warn
+
+  # 只显示错误项（失败+警告）
+  sudo $0 master --only-error
+
+  # 安静模式，只显示汇总
+  sudo $0 master --quiet
+
+  # 查看帮助
+  $0 --help
+
+${YELLOW}输出说明:${NC}
+  ${GREEN}[PASS]${NC}  配置符合安全基线要求
+  ${RED}[FAIL]${NC}  配置不符合安全基线要求
+  ${YELLOW}[WARN]${NC}  配置需要审查或未找到
+
+${YELLOW}三层检查机制:${NC}
+  L1: 进程参数检查 (最高优先级)
+  L2: 配置文件检查 (中等优先级)
+  L3: 默认值检查 (最低优先级)
+
+${YELLOW}更多信息:${NC}
+  GitHub: https://github.com/todaysu/cis-kubernetes-benchmark
+  基于: CIS Kubernetes Benchmark v1.12.0
+
+EOF
 }
 
 # Run main function
