@@ -2805,7 +2805,10 @@ run_section_5_checks() {
         fi
 
         # Exclude system ClusterRoles
-        local system_wildcards=$(echo "$clusterroles" | grep -c "^system:" || echo "0")
+        local system_wildcards=0
+        if [[ -n "$clusterroles" ]]; then
+            system_wildcards=$(echo "$clusterroles" | grep -c "^system:" 2>/dev/null || echo "0")
+        fi
         wildcard_clusterroles=$((wildcard_clusterroles - system_wildcards))
 
         if [[ $wildcard_roles -eq 0 && $wildcard_clusterroles -eq 0 ]]; then
@@ -2829,7 +2832,10 @@ run_section_5_checks() {
         fi
 
         # Exclude system roles
-        local system_pod_roles=$(echo "$roles" | grep -c "^ClusterRole/system:" || echo "0")
+        local system_pod_roles=0
+        if [[ -n "$roles" ]]; then
+            system_pod_roles=$(echo "$roles" | grep -c "^ClusterRole/system:" 2>/dev/null || echo "0")
+        fi
         pod_create_roles=$((pod_create_roles - system_pod_roles))
 
         if [[ $pod_create_roles -le 5 ]]; then
