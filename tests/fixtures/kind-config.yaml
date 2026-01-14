@@ -1,0 +1,34 @@
+# Kind 集群配置文件
+# 用于在 CI/CD 中创建测试 Kubernetes 集群
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  # Master 节点
+  - role: control-plane
+    image: kindest/node:v1.25.0
+    extraPortMappings:
+      - containerPort: 6443
+        hostPort: 6443
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+  # Worker 节点 1
+  - role: worker
+    image: kindest/node:v1.25.0
+  # Worker 节点 2
+  - role: worker
+    image: kindest/node:v1.25.0
+# Containerd 配置
+containerdConfigPatches:
+  - |-
+    [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:5000"]
+      endpoint = ["http://localhost:5000"]
+# 网络配置
+networking:
+  disableDefaultCNI: false
+  kubeProxyMode: "iptables"
+  podSubnet: "10.244.0.0/16"
+  serviceSubnet: "10.96.0.0/12"
