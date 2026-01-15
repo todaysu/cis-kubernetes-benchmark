@@ -689,112 +689,118 @@ get_kubelet_config() {
 #  Section 1.1: Control Plane Component Configuration Files
 #-----------------------------#
 
+
+#-----------------------------#
 run_section_1_1_checks() {
     echo -e "\n${BLUE}=================================================${NC}"
     echo -e "${BLUE}Section 1.1 - Control Plane Component Configuration Files${NC}"
     echo -e "${BLUE}=================================================${NC}\n"
 
-    # 1.1.1: Ensure that the API server pod specification file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  1.1.1 - 1.1.8: Pod 规范文件检查 (manifests 目录)
+    #--------------------------------------------------------------------------------
+
+    # 1.1.1: Ensure that the API server pod specification file permissions are set to 600 or more restrictive
     check_1_1_1() {
         local file="/etc/kubernetes/manifests/kube-apiserver.yaml"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "API Server pod spec file permissions are $((10#$(stat -c "%a" "$file" 2>/dev/null || stat -f "%Lp" "$file")))" "1.1.1"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "API server pod specification file permissions are 600 or more restrictive" "1.1.1"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "API Server pod spec file not found at $file" "1.1.1"
+                print_result "WARN" "API server pod specification file not found at $file" "1.1.1"
             else
-                print_result "FAIL" "API Server pod spec file permissions are not 644 or more restrictive" "1.1.1"
+                print_result "FAIL" "API server pod specification file permissions are not 600 or more restrictive" "1.1.1"
             fi
         fi
     }
 
-    # 1.1.2: Ensure that the API server pod specification file ownership is set to root:root
+    # 1.1.2: Ensure that the API Server pod specification file ownership is set to root:root
     check_1_1_2() {
         local file="/etc/kubernetes/manifests/kube-apiserver.yaml"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "API Server pod spec file ownership is root:root" "1.1.2"
+            print_result "PASS" "API Server pod specification file ownership is set to root:root" "1.1.2"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "API Server pod spec file not found at $file" "1.1.2"
+                print_result "WARN" "API Server pod specification file not found at $file" "1.1.2"
             else
-                print_result "FAIL" "API Server pod spec file ownership is not root:root" "1.1.2"
+                print_result "FAIL" "API Server pod specification file ownership is not set to root:root" "1.1.2"
             fi
         fi
     }
 
-    # 1.1.3: Ensure that the controller manager pod specification file permissions are set to 644 or more restrictive
+    # 1.1.3: Ensure that the controller manager pod specification file permissions are set to 600 or more restrictive
     check_1_1_3() {
         local file="/etc/kubernetes/manifests/kube-controller-manager.yaml"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "Controller Manager pod spec file permissions are 644 or more restrictive" "1.1.3"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "Controller manager pod specification file permissions are 600 or more restrictive" "1.1.3"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Controller Manager pod spec file not found at $file" "1.1.3"
+                print_result "WARN" "Controller manager pod specification file not found at $file" "1.1.3"
             else
-                print_result "FAIL" "Controller Manager pod spec file permissions are not 644 or more restrictive" "1.1.3"
+                print_result "FAIL" "Controller manager pod specification file permissions are not 600 or more restrictive" "1.1.3"
             fi
         fi
     }
 
-    # 1.1.4: Ensure that the controller manager pod specification file ownership is set to root:root
+    # 1.1.4: Ensure that the Controller Manager pod specification file ownership is set to root:root
     check_1_1_4() {
         local file="/etc/kubernetes/manifests/kube-controller-manager.yaml"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "Controller Manager pod spec file ownership is root:root" "1.1.4"
+            print_result "PASS" "Controller Manager pod specification file ownership is set to root:root" "1.1.4"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Controller Manager pod spec file not found at $file" "1.1.4"
+                print_result "WARN" "Controller Manager pod specification file not found at $file" "1.1.4"
             else
-                print_result "FAIL" "Controller Manager pod spec file ownership is not root:root" "1.1.4"
+                print_result "FAIL" "Controller Manager pod specification file ownership is not set to root:root" "1.1.4"
             fi
         fi
     }
 
-    # 1.1.5: Ensure that the scheduler pod specification file permissions are set to 644 or more restrictive
+    # 1.1.5: Ensure that the scheduler pod specification file permissions are set to 600 or more restrictive
     check_1_1_5() {
         local file="/etc/kubernetes/manifests/kube-scheduler.yaml"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "Scheduler pod spec file permissions are 644 or more restrictive" "1.1.5"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "Scheduler pod specification file permissions are 600 or more restrictive" "1.1.5"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Scheduler pod spec file not found at $file" "1.1.5"
+                print_result "WARN" "Scheduler pod specification file not found at $file" "1.1.5"
             else
-                print_result "FAIL" "Scheduler pod spec file permissions are not 644 or more restrictive" "1.1.5"
+                print_result "FAIL" "Scheduler pod specification file permissions are not 600 or more restrictive" "1.1.5"
             fi
         fi
     }
 
-    # 1.1.6: Ensure that the scheduler pod specification file ownership is set to root:root
+    # 1.1.6: Ensure that the Scheduler pod specification file ownership is set to root:root
     check_1_1_6() {
         local file="/etc/kubernetes/manifests/kube-scheduler.yaml"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "Scheduler pod spec file ownership is root:root" "1.1.6"
+            print_result "PASS" "Scheduler pod specification file ownership is set to root:root" "1.1.6"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Scheduler pod spec file not found at $file" "1.1.6"
+                print_result "WARN" "Scheduler pod specification file not found at $file" "1.1.6"
             else
-                print_result "FAIL" "Scheduler pod spec file ownership is not root:root" "1.1.6"
+                print_result "FAIL" "Scheduler pod specification file ownership is not set to root:root" "1.1.6"
             fi
         fi
     }
 
-    # 1.1.7: Ensure that the etcd pod specification file permissions are set to 644 or more restrictive
+    # 1.1.7: Ensure that the etcd pod specification file permissions are set to 600 or more restrictive
     check_1_1_7() {
         local file="/etc/kubernetes/manifests/etcd.yaml"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "etcd pod spec file permissions are 644 or more restrictive" "1.1.7"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "etcd pod specification file permissions are 600 or more restrictive" "1.1.7"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "etcd pod spec file not found at $file" "1.1.7"
+                print_result "WARN" "etcd pod specification file not found at $file" "1.1.7"
             else
-                print_result "FAIL" "etcd pod spec file permissions are not 644 or more restrictive" "1.1.7"
+                print_result "FAIL" "etcd pod specification file permissions are not 600 or more restrictive" "1.1.7"
             fi
         fi
     }
@@ -803,154 +809,103 @@ run_section_1_1_checks() {
     check_1_1_8() {
         local file="/etc/kubernetes/manifests/etcd.yaml"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "etcd pod spec file ownership is root:root" "1.1.8"
+            print_result "PASS" "etcd pod specification file ownership is set to root:root" "1.1.8"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "etcd pod spec file not found at $file" "1.1.8"
+                print_result "WARN" "etcd pod specification file not found at $file" "1.1.8"
             else
-                print_result "FAIL" "etcd pod spec file ownership is not root:root" "1.1.8"
+                print_result "FAIL" "etcd pod specification file ownership is not set to root:root" "1.1.8"
             fi
         fi
     }
 
-    # 1.1.9: Ensure that the network configuration file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  1.1.9 - 1.1.10: CNI 配置文件检查
+    #--------------------------------------------------------------------------------
+
+    # 1.1.9: Ensure that the CNI configuration file permissions are set to 600 or more restrictive
     check_1_1_9() {
         local dir="/etc/cni/net.d"
         local found_files=0
         local failed=0
 
         if [[ ! -d "$dir" ]]; then
-            print_result "WARN" "CNI network configuration directory not found at $dir" "1.1.9"
+            print_result "WARN" "CNI configuration directory not found at $dir" "1.1.9"
             return
         fi
 
-        # 检查目录下所有文件的权限（不限于 .conf 文件）
+        # 检查目录下所有文件的权限（600 或更严格）
         while IFS= read -r -d '' file; do
             found_files=1
-            if ! check_file_permissions "$file" 644; then
+            if ! check_file_permissions "$file" 600; then
                 failed=1
-                print_result "FAIL" "Network config file $file permissions are not 644 or more restrictive" "1.1.9"
+                print_result "FAIL" "CNI configuration file $file permissions are not 600 or more restrictive" "1.1.9"
                 return
             fi
         done < <(find "$dir" -type f -print0 2>/dev/null)
 
         if [[ $found_files -eq 0 ]]; then
-            print_result "WARN" "No network configuration files found in $dir" "1.1.9"
+            print_result "WARN" "No CNI configuration files found in $dir" "1.1.9"
         elif [[ $failed -eq 0 ]]; then
-            print_result "PASS" "All network configuration files have 644 or more restrictive permissions" "1.1.9"
+            print_result "PASS" "All CNI configuration files have 600 or more restrictive permissions" "1.1.9"
         fi
     }
 
-    # 1.1.10: Ensure that the network configuration file ownership is set to root:root
+    # 1.1.10: Ensure that the CNI configuration file ownership is set to root:root
     check_1_1_10() {
         local dir="/etc/cni/net.d"
         local found_files=0
         local failed=0
 
         if [[ ! -d "$dir" ]]; then
-            print_result "WARN" "CNI network configuration directory not found at $dir" "1.1.10"
+            print_result "WARN" "CNI configuration directory not found at $dir" "1.1.10"
             return
         fi
 
-        # 检查目录下所有文件的所有权（不限于 .conf 文件）
+        # 检查目录下所有文件的所有权
         while IFS= read -r -d '' file; do
             found_files=1
             if ! check_file_ownership "$file" "root" "root"; then
                 failed=1
-                print_result "FAIL" "Network config file $file ownership is not root:root" "1.1.10"
+                print_result "FAIL" "CNI configuration file $file ownership is not root:root" "1.1.10"
                 return
             fi
         done < <(find "$dir" -type f -print0 2>/dev/null)
 
         if [[ $found_files -eq 0 ]]; then
-            print_result "WARN" "No network configuration files found in $dir" "1.1.10"
+            print_result "WARN" "No CNI configuration files found in $dir" "1.1.10"
         elif [[ $failed -eq 0 ]]; then
-            print_result "PASS" "All network configuration files are owned by root:root" "1.1.10"
+            print_result "PASS" "All CNI configuration files are owned by root:root" "1.1.10"
         fi
     }
 
-    # 1.1.11: Ensure that the container runtime socket file permissions are set to 660 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  1.1.11 - 1.1.12: etcd 数据目录检查
+    #--------------------------------------------------------------------------------
+
+    # 1.1.11: Ensure that the etcd data directory permissions are set to 700 or more restrictive
     check_1_1_11() {
-        local sockets=("/var/run/docker.sock" "/run/containerd/containerd.sock" "/run/crio/crio.sock" "/run/kubelet.sock")
-        local found=0
-        local failed=0
-
-        for socket in "${sockets[@]}"; do
-            if [[ -S "$socket" ]]; then
-                found=1
-                if ! check_file_permissions "$socket" 660; then
-                    failed=1
-                    print_result "FAIL" "Container runtime socket $socket permissions are not 660 or more restrictive" "1.1.11"
-                    return
-                fi
-            fi
-        done
-
-        if [[ $found -eq 0 ]]; then
-            print_result "WARN" "No container runtime socket files found" "1.1.11"
-        elif [[ $failed -eq 0 ]]; then
-            print_result "PASS" "All container runtime socket files have 660 or more restrictive permissions" "1.1.11"
-        fi
-    }
-
-    # 1.1.12: Ensure that the container runtime socket file ownership is set to root:root or root:container runtime
-    check_1_1_12() {
-        local sockets=("/var/run/docker.sock" "/run/containerd/containerd.sock" "/run/crio/crio.sock" "/run/kubelet.sock")
-        local found=0
-        local failed=0
-
-        for socket in "${sockets[@]}"; do
-            if [[ -S "$socket" ]]; then
-                found=1
-                local actual_user
-                local actual_group
-
-                if [[ "$OSTYPE" == "darwin"* ]]; then
-                    actual_user=$(stat -f "%Su" "$socket")
-                    actual_group=$(stat -f "%Sg" "$socket")
-                else
-                    actual_user=$(stat -c "%U" "$socket")
-                    actual_group=$(stat -c "%G" "$socket")
-                fi
-
-                if [[ "$actual_user" != "root" ]]; then
-                    failed=1
-                    print_result "FAIL" "Container runtime socket $socket ownership is not root:root or root:<runtime>" "1.1.12"
-                    return
-                fi
-            fi
-        done
-
-        if [[ $found -eq 0 ]]; then
-            print_result "WARN" "No container runtime socket files found" "1.1.12"
-        elif [[ $failed -eq 0 ]]; then
-            print_result "PASS" "All container runtime socket files are properly owned" "1.1.12"
-        fi
-    }
-
-    # 1.1.13: Ensure that the etcd data directory permissions are set to 700 or more restrictive
-    check_1_1_13() {
         local dir="/var/lib/etcd"
         if check_file_permissions "$dir" 700; then
-            print_result "PASS" "etcd data directory permissions are 700 or more restrictive" "1.1.13"
+            print_result "PASS" "etcd data directory permissions are 700 or more restrictive" "1.1.11"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "etcd data directory not found at $dir" "1.1.13"
+                print_result "WARN" "etcd data directory not found at $dir" "1.1.11"
             else
-                print_result "FAIL" "etcd data directory permissions are not 700 or more restrictive" "1.1.13"
+                print_result "FAIL" "etcd data directory permissions are not 700 or more restrictive" "1.1.11"
             fi
         fi
     }
 
-    # 1.1.14: Ensure that the etcd data directory ownership is set to etcd:etcd
-    check_1_1_14() {
+    # 1.1.12: Ensure that the etcd data directory ownership is set to etcd:etcd
+    check_1_1_12() {
         local dir="/var/lib/etcd"
 
         # 检查目录是否存在
         if [[ ! -e "$dir" ]]; then
-            print_result "WARN" "etcd data directory not found at $dir" "1.1.14"
+            print_result "WARN" "etcd data directory not found at $dir" "1.1.12"
             return
         fi
 
@@ -967,105 +922,175 @@ run_section_1_1_checks() {
 
         # 检查是否为 etcd:etcd 或 root:root（root 权限更高，也通过）
         if [[ "$actual_user" == "etcd" && "$actual_group" == "etcd" ]]; then
-            print_result "PASS" "etcd data directory ownership is etcd:etcd" "1.1.14"
+            print_result "PASS" "etcd data directory ownership is set to etcd:etcd" "1.1.12"
         elif [[ "$actual_user" == "root" && "$actual_group" == "root" ]]; then
-            print_result "PASS" "etcd data directory ownership is root:root (acceptable, root has higher privileges)" "1.1.14"
+            print_result "PASS" "etcd data directory ownership is set to root:root (acceptable)" "1.1.12"
         else
-            print_result "FAIL" "etcd data directory ownership is $actual_user:$actual_group (expected etcd:etcd or root:root)" "1.1.14"
+            print_result "FAIL" "etcd data directory ownership is not set to etcd:etcd (found $actual_user:$actual_group)" "1.1.12"
         fi
     }
 
-    # 1.1.15: Ensure that the admin.conf file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  1.1.13 - 1.1.18: Kubernetes 配置文件检查 (admin.conf, scheduler.conf, controller-manager.conf)
+    #--------------------------------------------------------------------------------
+
+    # 1.1.13: Ensure that the admin.conf file permissions are set to 600 or more restrictive
+    check_1_1_13() {
+        local file="/etc/kubernetes/admin.conf"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "admin.conf file permissions are 600 or more restrictive" "1.1.13"
+        else
+            local status=$?
+            if [[ $status -eq 2 ]]; then
+                print_result "WARN" "admin.conf file not found at $file" "1.1.13"
+            else
+                print_result "FAIL" "admin.conf file permissions are not 600 or more restrictive" "1.1.13"
+            fi
+        fi
+    }
+
+    # 1.1.14: Ensure that the admin.conf file ownership is set to root:root
+    check_1_1_14() {
+        local file="/etc/kubernetes/admin.conf"
+        if check_file_ownership "$file" "root" "root"; then
+            print_result "PASS" "admin.conf file ownership is set to root:root" "1.1.14"
+        else
+            local status=$?
+            if [[ $status -eq 2 ]]; then
+                print_result "WARN" "admin.conf file not found at $file" "1.1.14"
+            else
+                print_result "FAIL" "admin.conf file ownership is not set to root:root" "1.1.14"
+            fi
+        fi
+    }
+
+    # 1.1.15: Ensure that the scheduler.conf file permissions are set to 600 or more restrictive
     check_1_1_15() {
-        local file="/etc/kubernetes/admin.conf"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "admin.conf file permissions are 644 or more restrictive" "1.1.15"
+        local file="/etc/kubernetes/scheduler.conf"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "scheduler.conf file permissions are 600 or more restrictive" "1.1.15"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "admin.conf file not found at $file" "1.1.15"
+                print_result "WARN" "scheduler.conf file not found at $file" "1.1.15"
             else
-                print_result "FAIL" "admin.conf file permissions are not 644 or more restrictive" "1.1.15"
+                print_result "FAIL" "scheduler.conf file permissions are not 600 or more restrictive" "1.1.15"
             fi
         fi
     }
 
-    # 1.1.16: Ensure that the admin.conf file ownership is set to root:root
+    # 1.1.16: Ensure that the scheduler.conf file ownership is set to root:root
     check_1_1_16() {
-        local file="/etc/kubernetes/admin.conf"
+        local file="/etc/kubernetes/scheduler.conf"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "admin.conf file ownership is root:root" "1.1.16"
+            print_result "PASS" "scheduler.conf file ownership is set to root:root" "1.1.16"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "admin.conf file not found at $file" "1.1.16"
+                print_result "WARN" "scheduler.conf file not found at $file" "1.1.16"
             else
-                print_result "FAIL" "admin.conf file ownership is not root:root" "1.1.16"
+                print_result "FAIL" "scheduler.conf file ownership is not set to root:root" "1.1.16"
             fi
         fi
     }
 
-    # 1.1.17: Ensure that the scheduler.conf file permissions are set to 644 or more restrictive
+    # 1.1.17: Ensure that the controller-manager.conf file permissions are set to 600 or more restrictive
     check_1_1_17() {
-        local file="/etc/kubernetes/scheduler.conf"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "scheduler.conf file permissions are 644 or more restrictive" "1.1.17"
+        local file="/etc/kubernetes/controller-manager.conf"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "controller-manager.conf file permissions are 600 or more restrictive" "1.1.17"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "scheduler.conf file not found at $file" "1.1.17"
+                print_result "WARN" "controller-manager.conf file not found at $file" "1.1.17"
             else
-                print_result "FAIL" "scheduler.conf file permissions are not 644 or more restrictive" "1.1.17"
+                print_result "FAIL" "controller-manager.conf file permissions are not 600 or more restrictive" "1.1.17"
             fi
         fi
     }
 
-    # 1.1.18: Ensure that the scheduler.conf file ownership is set to root:root
+    # 1.1.18: Ensure that the controller-manager.conf file ownership is set to root:root
     check_1_1_18() {
-        local file="/etc/kubernetes/scheduler.conf"
+        local file="/etc/kubernetes/controller-manager.conf"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "scheduler.conf file ownership is root:root" "1.1.18"
+            print_result "PASS" "controller-manager.conf file ownership is set to root:root" "1.1.18"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "scheduler.conf file not found at $file" "1.1.18"
+                print_result "WARN" "controller-manager.conf file not found at $file" "1.1.18"
             else
-                print_result "FAIL" "scheduler.conf file ownership is not root:root" "1.1.18"
+                print_result "FAIL" "controller-manager.conf file ownership is not set to root:root" "1.1.18"
             fi
         fi
     }
 
-    # 1.1.19: Ensure that the controller-manager.conf file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  1.1.19 - 1.1.21: Kubernetes PKI 目录和文件检查
+    #--------------------------------------------------------------------------------
+
+    # 1.1.19: Ensure that the Kubernetes PKI directory and file ownership is set to root:root
     check_1_1_19() {
-        local file="/etc/kubernetes/controller-manager.conf"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "controller-manager.conf file permissions are 644 or more restrictive" "1.1.19"
-        else
-            local status=$?
-            if [[ $status -eq 2 ]]; then
-                print_result "WARN" "controller-manager.conf file not found at $file" "1.1.19"
-            else
-                print_result "FAIL" "controller-manager.conf file permissions are not 644 or more restrictive" "1.1.19"
+        local dir="/etc/kubernetes/pki"
+        local failed=0
+
+        # 首先检查目录所有权
+        if [[ -d "$dir" ]]; then
+            if ! check_file_ownership "$dir" "root" "root"; then
+                failed=1
+                print_result "FAIL" "PKI directory ownership is not root:root" "1.1.19"
+                return
             fi
+        else
+            print_result "WARN" "PKI directory not found at $dir" "1.1.19"
+            return
+        fi
+
+        # 检查目录下所有文件的所有权
+        local found_files=0
+        while IFS= read -r -d '' file; do
+            found_files=1
+            if ! check_file_ownership "$file" "root" "root"; then
+                failed=1
+                print_result "FAIL" "PKI file $file ownership is not root:root" "1.1.19"
+                return
+            fi
+        done < <(find "$dir" -type f \( -name "*.crt" -o -name "*.key" -o -name "*.pem" \) -print0 2>/dev/null)
+
+        if [[ $found_files -eq 0 ]]; then
+            print_result "WARN" "No PKI files found in $dir" "1.1.19"
+        elif [[ $failed -eq 0 ]]; then
+            print_result "PASS" "PKI directory and all files are owned by root:root" "1.1.19"
         fi
     }
 
-    # 1.1.20: Ensure that the controller-manager.conf file ownership is set to root:root
+    # 1.1.20: Ensure that the PKI certificate file permissions are set to 644 or more restrictive
     check_1_1_20() {
-        local file="/etc/kubernetes/controller-manager.conf"
-        if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "controller-manager.conf file ownership is root:root" "1.1.20"
-        else
-            local status=$?
-            if [[ $status -eq 2 ]]; then
-                print_result "WARN" "controller-manager.conf file not found at $file" "1.1.20"
-            else
-                print_result "FAIL" "controller-manager.conf file ownership is not root:root" "1.1.20"
+        local dir="/etc/kubernetes/pki"
+        if [[ ! -d "$dir" ]]; then
+            print_result "WARN" "PKI directory not found at $dir" "1.1.20"
+            return
+        fi
+
+        # 检查证书文件权限 (.crt, *.pem)
+        local failed=0
+        local found_files=0
+        while IFS= read -r -d '' file; do
+            found_files=1
+            if ! check_file_permissions "$file" 644; then
+                failed=1
+                print_result "FAIL" "PKI certificate file $file permissions are not 644 or more restrictive" "1.1.20"
+                return
             fi
+        done < <(find "$dir" -type f \( -name "*.crt" -o -name "*.pem" \) -print0 2>/dev/null)
+
+        if [[ $found_files -eq 0 ]]; then
+            print_result "WARN" "No PKI certificate files found in $dir" "1.1.20"
+        elif [[ $failed -eq 0 ]]; then
+            print_result "PASS" "All PKI certificate files have 644 or more restrictive permissions" "1.1.20"
         fi
     }
 
-    # 1.1.21: Ensure that the Kubernetes PKI directory and file ownership is set to root:root
+    # 1.1.21: Ensure that the PKI key file permissions are set to 600
     check_1_1_21() {
         local dir="/etc/kubernetes/pki"
         if [[ ! -d "$dir" ]]; then
@@ -1073,14 +1098,28 @@ run_section_1_1_checks() {
             return
         fi
 
-        if check_dir_ownership_recursive "$dir" "root" "root"; then
-            print_result "PASS" "All files in PKI directory are owned by root:root" "1.1.21"
-        else
-            print_result "FAIL" "Some files in PKI directory are not owned by root:root" "1.1.21"
+        # 检查密钥文件权限 (.key)
+        local failed=0
+        local found_files=0
+        while IFS= read -r -d '' file; do
+            found_files=1
+            if ! check_file_permissions "$file" 600; then
+                failed=1
+                print_result "FAIL" "PKI key file $file permissions are not 600" "1.1.21"
+                return
+            fi
+        done < <(find "$dir" -type f -name "*.key" -print0 2>/dev/null)
+
+        if [[ $found_files -eq 0 ]]; then
+            print_result "WARN" "No PKI key files found in $dir" "1.1.21"
+        elif [[ $failed -eq 0 ]]; then
+            print_result "PASS" "All PKI key files have 600 permissions" "1.1.21"
         fi
     }
 
-    # Execute all 1.1 checks
+    #--------------------------------------------------------------------------------
+    #  执行所有 1.1 检查项
+    #--------------------------------------------------------------------------------
     check_1_1_1
     check_1_1_2
     check_1_1_3
@@ -1103,10 +1142,9 @@ run_section_1_1_checks() {
     check_1_1_20
     check_1_1_21
 }
-
-#-----------------------------#
 #  Section 1.2: API Server Configuration
 #-----------------------------#
+
 
 run_section_1_2_checks() {
     echo -e "\n${BLUE}=================================================${NC}"
@@ -1117,42 +1155,22 @@ run_section_1_2_checks() {
     local apiserver_process
     apiserver_process=$(get_apiserver_args)
 
-    # Get API Server config file path
-    local apiserver_config_file="/etc/kubernetes/manifests/kube-apiserver.yaml"
-    [[ ! -f "$apiserver_config_file" ]] && apiserver_config_file=""
-
-    if [[ -z "$apiserver_process" ]] && [[ -z "$apiserver_config_file" ]]; then
-        print_result "WARN" "kube-apiserver process and config not found. Skipping API Server checks." "1.2.x"
+    if [[ -z "$apiserver_process" ]]; then
+        print_result "WARN" "kube-apiserver process not found. Skipping API Server checks." "1.2.x"
         return
     fi
 
-    #================================================================================
-    #  DEMONSTRATION: Three-Layer Checking Framework
-    #================================================================================
-    # The following checks demonstrate the NEW three-layer checking method:
-    #
-    # LAYER 1 (L1): Check process arguments (runtime - highest priority)
-    # LAYER 2 (L2): Check configuration files (persistent - medium priority)
-    # LAYER 3 (L3): Check default values (fallback - lowest priority)
-    #
-    # Usage: check_and_print_three_layer <check_id> <component> <param_name> <expected_value> [config_file] [default_value]
-    #
-    # Example: check_and_print_three_layer "1.2.1" "apiserver" "anonymous-auth" "false" "$apiserver_config_file" "true"
+    #--------------------------------------------------------------------------------
+    #  基本认证参数检查
     #--------------------------------------------------------------------------------
 
     # 1.2.1: Ensure that the --anonymous-auth argument is set to false
-    # OLD METHOD (single-layer, process only):
-    # check_1_2_1() {
-    #     if check_argument_value "--anonymous-auth" "false" "$apiserver_process"; then
-    #         print_result "PASS" "--anonymous-auth is set to false" "1.2.1"
-    #     else
-    #         print_result "FAIL" "--anonymous-auth is not set to false" "1.2.1"
-    #     fi
-    # }
-
-    # NEW METHOD (three-layer):
     check_1_2_1() {
-        check_and_print_three_layer "1.2.1" "apiserver" "anonymous-auth" "false" "$apiserver_config_file" "true"
+        if check_argument_value "--anonymous-auth" "false" "$apiserver_process"; then
+            print_result "PASS" "--anonymous-auth is set to false" "1.2.1"
+        else
+            print_result "FAIL" "--anonymous-auth is not set to false" "1.2.1"
+        fi
     }
 
     # 1.2.2: Ensure that the --token-auth-file parameter is not set
@@ -1164,142 +1182,162 @@ run_section_1_2_checks() {
         fi
     }
 
-    # 1.2.3: Ensure that the --DenyServiceExternalIPs is not set
+    # 1.2.3: Ensure that the DenyServiceExternalIPs is set
     check_1_2_3() {
-        # Note: This check depends on Kubernetes version and specific requirements
-        # Some environments may require this to be set
-        if check_argument_absent "--deny-service-external-ip" "$apiserver_process" && \
-           check_argument_absent "--DenyServiceExternalIPs" "$apiserver_process"; then
-            print_result "PASS" "--DenyServiceExternalIPs is not set" "1.2.3"
+        if check_admission_plugin "DenyServiceExternalIPs" "$apiserver_process"; then
+            print_result "PASS" "DenyServiceExternalIPs admission plugin is enabled" "1.2.3"
         else
-            print_result "WARN" "--DenyServiceExternalIPs is set (verify if required)" "1.2.3"
+            print_result "FAIL" "DenyServiceExternalIPs admission plugin is not enabled" "1.2.3"
         fi
     }
 
-    # 1.2.4: Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set
+    #--------------------------------------------------------------------------------
+    #  Kubelet 客户端认证检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.4: Ensure that the --kubelet-client-certificate and --kubelet-client-key arguments are set as appropriate
     check_1_2_4() {
-        if check_argument_present "--kubelet-client-certificate" "$apiserver_process" && \
-           check_argument_present "--kubelet-client-key" "$apiserver_process"; then
+        local has_cert=false
+        local has_key=false
+        
+        if check_argument_present "--kubelet-client-certificate" "$apiserver_process"; then
+            has_cert=true
+        fi
+        
+        if check_argument_present "--kubelet-client-key" "$apiserver_process"; then
+            has_key=true
+        fi
+        
+        if [[ "$has_cert" == "true" ]] && [[ "$has_key" == "true" ]]; then
             print_result "PASS" "--kubelet-client-certificate and --kubelet-client-key are set" "1.2.4"
         else
-            print_result "FAIL" "--kubelet-client-certificate and/or --kubelet-client-key are not set" "1.2.4"
+            print_result "WARN" "--kubelet-client-certificate and/or --kubelet-client-key are not set (may be appropriate for your environment)" "1.2.4"
         fi
     }
 
-    # 1.2.5: Ensure that the --kubelet-https argument is set to true
+    # 1.2.5: Ensure that the --kubelet-certificate-authority argument is set as appropriate
     check_1_2_5() {
-        # Note: In newer Kubernetes versions, this is deprecated/removed
-        if check_argument_value "--kubelet-https" "true" "$apiserver_process"; then
-            print_result "PASS" "--kubelet-https is set to true" "1.2.5"
-        elif check_argument_absent "--kubelet-https" "$apiserver_process"; then
-            # Default is true in newer versions
-            print_result "PASS" "--kubelet-https not set (defaults to true in current version)" "1.2.5"
+        if check_argument_present "--kubelet-certificate-authority" "$apiserver_process"; then
+            print_result "PASS" "--kubelet-certificate-authority is set" "1.2.5"
         else
-            print_result "FAIL" "--kubelet-https is not set to true" "1.2.5"
+            print_result "WARN" "--kubelet-certificate-authority is not set (may be appropriate for your environment)" "1.2.5"
         fi
     }
 
-    # 1.2.6: Ensure that the --bind-address argument is set to 127.0.0.1
+    #--------------------------------------------------------------------------------
+    #  授权模式检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.6: Ensure that the --authorization-mode argument is not set to AlwaysAllow
     check_1_2_6() {
-        if check_argument_value "--bind-address" "127.0.0.1" "$apiserver_process"; then
-            print_result "PASS" "--bind-address is set to 127.0.0.1" "1.2.6"
-        else
-            print_result "FAIL" "--bind-address is not set to 127.0.0.1" "1.2.6"
-        fi
-    }
-
-    # 1.2.7: Ensure that the --authorization-mode argument is not set to AlwaysAllow
-    check_1_2_7() {
         local auth_mode
         auth_mode=$(echo "$apiserver_process" | grep -oP "(?<=--authorization-mode=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--authorization-mode[^ ]*" | cut -d'=' -f2)
 
         if [[ "$auth_mode" != "AlwaysAllow" ]] && [[ -n "$auth_mode" ]]; then
-            print_result "PASS" "--authorization-mode is not set to AlwaysAllow" "1.2.7"
+            print_result "PASS" "--authorization-mode is not set to AlwaysAllow" "1.2.6"
         else
-            print_result "FAIL" "--authorization-mode is set to AlwaysAllow" "1.2.7"
+            print_result "FAIL" "--authorization-mode is set to AlwaysAllow" "1.2.6"
         fi
     }
 
-    # 1.2.8: Ensure that the --authorization-mode argument includes Node
-    check_1_2_8() {
+    # 1.2.7: Ensure that the --authorization-mode argument includes Node
+    check_1_2_7() {
         local auth_mode
         auth_mode=$(echo "$apiserver_process" | grep -oP "(?<=--authorization-mode=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--authorization-mode[^ ]*" | cut -d'=' -f2)
 
         if [[ "$auth_mode" == *"Node"* ]]; then
-            print_result "PASS" "--authorization-mode includes Node" "1.2.8"
+            print_result "PASS" "--authorization-mode includes Node" "1.2.7"
         else
-            print_result "FAIL" "--authorization-mode does not include Node" "1.2.8"
+            print_result "FAIL" "--authorization-mode does not include Node" "1.2.7"
         fi
     }
 
-    # 1.2.9: Ensure that the --authorization-mode argument includes RBAC
-    check_1_2_9() {
+    # 1.2.8: Ensure that the --authorization-mode argument includes RBAC
+    check_1_2_8() {
         local auth_mode
         auth_mode=$(echo "$apiserver_process" | grep -oP "(?<=--authorization-mode=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--authorization-mode[^ ]*" | cut -d'=' -f2)
 
         if [[ "$auth_mode" == *"RBAC"* ]]; then
-            print_result "PASS" "--authorization-mode includes RBAC" "1.2.9"
+            print_result "PASS" "--authorization-mode includes RBAC" "1.2.8"
         else
-            print_result "FAIL" "--authorization-mode does not include RBAC" "1.2.9"
+            print_result "FAIL" "--authorization-mode does not include RBAC" "1.2.8"
         fi
     }
 
-    # 1.2.10: Ensure that the admission control plugin EventRateLimit is set
-    check_1_2_10() {
+    #--------------------------------------------------------------------------------
+    #  准入控制插件检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.9: Ensure that the admission control plugin EventRateLimit is set
+    check_1_2_9() {
         if check_admission_plugin "EventRateLimit" "$apiserver_process"; then
-            print_result "PASS" "EventRateLimit admission plugin is enabled" "1.2.10"
+            print_result "PASS" "EventRateLimit admission plugin is enabled" "1.2.9"
         else
-            print_result "WARN" "EventRateLimit admission plugin is not enabled" "1.2.10"
+            print_result "WARN" "EventRateLimit admission plugin is not enabled" "1.2.9"
         fi
     }
 
-    # 1.2.11: Ensure that the admission control plugin AlwaysAdmit is not set
-    check_1_2_11() {
+    # 1.2.10: Ensure that the admission control plugin AlwaysAdmit is not set
+    check_1_2_10() {
         if check_admission_plugin_absent "AlwaysAdmit" "$apiserver_process"; then
-            print_result "PASS" "AlwaysAdmit admission plugin is not set" "1.2.11"
+            print_result "PASS" "AlwaysAdmit admission plugin is not set" "1.2.10"
         else
-            print_result "FAIL" "AlwaysAdmit admission plugin is set" "1.2.11"
+            print_result "FAIL" "AlwaysAdmit admission plugin is set" "1.2.10"
         fi
     }
 
-    # 1.2.12: Ensure that the admission control plugin AlwaysPullImages is set
-    check_1_2_12() {
+    # 1.2.11: Ensure that the admission control plugin AlwaysPullImages is set
+    check_1_2_11() {
         if check_admission_plugin "AlwaysPullImages" "$apiserver_process"; then
-            print_result "PASS" "AlwaysPullImages admission plugin is set" "1.2.12"
+            print_result "PASS" "AlwaysPullImages admission plugin is enabled" "1.2.11"
         else
-            print_result "WARN" "AlwaysPullImages admission plugin is not set" "1.2.12"
+            print_result "WARN" "AlwaysPullImages admission plugin is not enabled" "1.2.11"
         fi
     }
 
-    # 1.2.13: Ensure that the admission control plugin SecurityContextDeny is set
-    check_1_2_13() {
-        if check_admission_plugin "SecurityContextDeny" "$apiserver_process"; then
-            print_result "PASS" "SecurityContextDeny admission plugin is set" "1.2.13"
-        else
-            print_result "WARN" "SecurityContextDeny admission plugin is not set" "1.2.13"
-        fi
-    }
-
-    # 1.2.14: Ensure that the admission control plugin ServiceAccount is set
-    check_1_2_14() {
+    # 1.2.12: Ensure that the admission control plugin ServiceAccount is set
+    check_1_2_12() {
         if check_admission_plugin "ServiceAccount" "$apiserver_process"; then
-            print_result "PASS" "ServiceAccount admission plugin is set" "1.2.14"
+            print_result "PASS" "ServiceAccount admission plugin is enabled" "1.2.12"
         else
-            print_result "FAIL" "ServiceAccount admission plugin is not set" "1.2.14"
+            print_result "FAIL" "ServiceAccount admission plugin is not enabled" "1.2.12"
         fi
     }
 
-    # 1.2.15: Ensure that the --service-account-lookup argument is set to true
-    check_1_2_15() {
-        if check_argument_value "--service-account-lookup" "true" "$apiserver_process"; then
-            print_result "PASS" "--service-account-lookup is set to true" "1.2.15"
-        elif check_argument_absent "--service-account-lookup" "$apiserver_process"; then
-            # Default is true in newer versions
-            print_result "PASS" "--service-account-lookup not set (defaults to true in current version)" "1.2.15"
+    # 1.2.13: Ensure that the admission control plugin NamespaceLifecycle is set
+    check_1_2_13() {
+        if check_admission_plugin "NamespaceLifecycle" "$apiserver_process"; then
+            print_result "PASS" "NamespaceLifecycle admission plugin is enabled" "1.2.13"
         else
-            print_result "FAIL" "--service-account-lookup is not set to true" "1.2.15"
+            print_result "FAIL" "NamespaceLifecycle admission plugin is not enabled" "1.2.13"
         fi
     }
+
+    # 1.2.14: Ensure that the admission control plugin NodeRestriction is set
+    check_1_2_14() {
+        if check_admission_plugin "NodeRestriction" "$apiserver_process"; then
+            print_result "PASS" "NodeRestriction admission plugin is enabled" "1.2.14"
+        else
+            print_result "FAIL" "NodeRestriction admission plugin is not enabled" "1.2.14"
+        fi
+    }
+
+    #--------------------------------------------------------------------------------
+    #  安全配置检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.15: Ensure that the --profiling argument is set to false
+    check_1_2_15() {
+        if check_argument_value "--profiling" "false" "$apiserver_process"; then
+            print_result "PASS" "--profiling is set to false" "1.2.15"
+        else
+            print_result "FAIL" "--profiling is not set to false" "1.2.15"
+        fi
+    }
+
+    #--------------------------------------------------------------------------------
+    #  审计日志配置检查
+    #--------------------------------------------------------------------------------
 
     # 1.2.16: Ensure that the --audit-log-path argument is set
     check_1_2_16() {
@@ -1315,185 +1353,184 @@ run_section_1_2_checks() {
         local audit_maxage
         audit_maxage=$(echo "$apiserver_process" | grep -oP "(?<=--audit-log-maxage=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--audit-log-maxage[^ ]*" | cut -d'=' -f2)
 
-        if [[ -n "$audit_maxage" ]] && [[ "$audit_maxage" -ge 30 ]]; then
-            print_result "PASS" "--audit-log-maxage is set to $audit_maxage (>= 30)" "1.2.17"
-        elif [[ -n "$audit_maxage" ]]; then
-            print_result "WARN" "--audit-log-maxage is set to $audit_maxage (< 30 recommended)" "1.2.17"
+        # 只要配置了值就通过
+        if [[ -n "$audit_maxage" ]]; then
+            print_result "PASS" "--audit-log-maxage is set to $audit_maxage" "1.2.17"
         else
             print_result "FAIL" "--audit-log-maxage is not set" "1.2.17"
         fi
     }
 
-    # 1.2.18: Ensure that the --audit-log-maxbackup argument is set
+    # 1.2.18: Ensure that the --audit-log-maxbackup argument is set to 10 or as appropriate
     check_1_2_18() {
-        if check_argument_present "--audit-log-maxbackup" "$apiserver_process"; then
-            print_result "PASS" "--audit-log-maxbackup is set" "1.2.18"
+        local audit_maxbackup
+        audit_maxbackup=$(echo "$apiserver_process" | grep -oP "(?<=--audit-log-maxbackup=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--audit-log-maxbackup[^ ]*" | cut -d'=' -f2)
+
+        if [[ -n "$audit_maxbackup" ]]; then
+            print_result "PASS" "--audit-log-maxbackup is set to $audit_maxbackup" "1.2.18"
         else
-            print_result "FAIL" "--audit-log-maxbackup is not set" "1.2.18"
+            print_result "WARN" "--audit-log-maxbackup is not set" "1.2.18"
         fi
     }
 
-    # 1.2.19: Ensure that the --audit-log-maxsize argument is set
+    # 1.2.19: Ensure that the --audit-log-maxsize argument is set to 100 or as appropriate
     check_1_2_19() {
-        if check_argument_present "--audit-log-maxsize" "$apiserver_process"; then
-            print_result "PASS" "--audit-log-maxsize is set" "1.2.19"
+        local audit_maxsize
+        audit_maxsize=$(echo "$apiserver_process" | grep -oP "(?<=--audit-log-maxsize=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--audit-log-maxsize[^ ]*" | cut -d'=' -f2)
+
+        if [[ -n "$audit_maxsize" ]]; then
+            print_result "PASS" "--audit-log-maxsize is set to $audit_maxsize" "1.2.19"
         else
-            print_result "FAIL" "--audit-log-maxsize is not set" "1.2.19"
+            print_result "WARN" "--audit-log-maxsize is not set" "1.2.19"
         fi
     }
 
-    # 1.2.20: Ensure that the --request-timeout argument is set
+    #--------------------------------------------------------------------------------
+    #  其他安全配置检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.20: Ensure that the --request-timeout argument is set as appropriate
     check_1_2_20() {
-        # Note: This is deprecated in newer versions
         if check_argument_present "--request-timeout" "$apiserver_process"; then
             print_result "PASS" "--request-timeout is set" "1.2.20"
         else
-            print_result "WARN" "--request-timeout is not set (may be deprecated in current version)" "1.2.20"
+            print_result "WARN" "--request-timeout is not set (may be appropriate for your environment)" "1.2.20"
         fi
     }
 
-    # 1.2.21: Ensure that the --authorization-mode argument includes Node,RBAC
+    # 1.2.21: Ensure that the --service-account-lookup argument is set to true
     check_1_2_21() {
-        local auth_mode
-        auth_mode=$(echo "$apiserver_process" | grep -oP "(?<=--authorization-mode=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--authorization-mode[^ ]*" | cut -d'=' -f2)
-
-        if [[ "$auth_mode" == *"Node"* ]] && [[ "$auth_mode" == *"RBAC"* ]]; then
-            print_result "PASS" "--authorization-mode includes Node and RBAC" "1.2.21"
+        if check_argument_value "--service-account-lookup" "true" "$apiserver_process"; then
+            print_result "PASS" "--service-account-lookup is set to true" "1.2.21"
         else
-            print_result "FAIL" "--authorization-mode does not include both Node and RBAC" "1.2.21"
+            print_result "FAIL" "--service-account-lookup is not set to true" "1.2.21"
         fi
     }
 
-    # 1.2.22: Ensure that the --token-auth-file parameter is not set (duplicate/similar to 1.2.2)
+    # 1.2.22: Ensure that the --service-account-key-file argument is set as appropriate
     check_1_2_22() {
-        if check_argument_absent "--token-auth-file" "$apiserver_process"; then
-            print_result "PASS" "--token-auth-file is not set" "1.2.22"
-        else
-            print_result "FAIL" "--token-auth-file is set" "1.2.22"
-        fi
-    }
-
-    # 1.2.23: Ensure that the --enable-bootstrap-token-auth argument is not set (unless required)
-    check_1_2_23() {
-        # This is typically set during cluster bootstrap
-        if check_argument_absent "--enable-bootstrap-token-auth" "$apiserver_process"; then
-            print_result "PASS" "--enable-bootstrap-token-auth is not set" "1.2.23"
-        else
-            print_result "WARN" "--enable-bootstrap-token-auth is set (verify if required for bootstrapping)" "1.2.23"
-        fi
-    }
-
-    # 1.2.24: Ensure that the --etcd-certfile and --etcd-keyfile arguments are set
-    check_1_2_24() {
-        if check_argument_present "--etcd-certfile" "$apiserver_process" && \
-           check_argument_present "--etcd-keyfile" "$apiserver_process"; then
-            print_result "PASS" "--etcd-certfile and --etcd-keyfile are set" "1.2.24"
-        else
-            print_result "FAIL" "--etcd-certfile and/or --etcd-keyfile are not set" "1.2.24"
-        fi
-    }
-
-    # 1.2.25: Ensure that the --tls-cert-file and --tls-private-key-file arguments are set
-    check_1_2_25() {
-        if check_argument_present "--tls-cert-file" "$apiserver_process" && \
-           check_argument_present "--tls-private-key-file" "$apiserver_process"; then
-            print_result "PASS" "--tls-cert-file and --tls-private-key-file are set" "1.2.25"
-        else
-            print_result "FAIL" "--tls-cert-file and/or --tls-private-key-file are not set" "1.2.25"
-        fi
-    }
-
-    # 1.2.26: Ensure that the --client-ca-file argument is set
-    check_1_2_26() {
-        if check_argument_present "--client-ca-file" "$apiserver_process"; then
-            print_result "PASS" "--client-ca-file is set" "1.2.26"
-        else
-            print_result "FAIL" "--client-ca-file is not set" "1.2.26"
-        fi
-    }
-
-    # 1.2.27: Ensure that the --etcd-cafile argument is set
-    check_1_2_27() {
-        if check_argument_present "--etcd-cafile" "$apiserver_process"; then
-            print_result "PASS" "--etcd-cafile is set" "1.2.27"
-        else
-            print_result "FAIL" "--etcd-cafile is not set" "1.2.27"
-        fi
-    }
-
-    # 1.2.28: Ensure that the --encryption-provider-config argument is set
-    check_1_2_28() {
-        if check_argument_present "--encryption-provider-config" "$apiserver_process"; then
-            print_result "PASS" "--encryption-provider-config is set" "1.2.28"
-        else
-            print_result "WARN" "--encryption-provider-config is not set (encryption at rest not enabled)" "1.2.28"
-        fi
-    }
-
-    # 1.2.29: Ensure that the --admission-control-plugin-config-file argument is set
-    check_1_2_29() {
-        if check_argument_present "--admission-control-config-file" "$apiserver_process" || \
-           check_argument_present "--admission-control-plugin-config-file" "$apiserver_process"; then
-            print_result "PASS" "Admission control config file is set" "1.2.29"
-        else
-            print_result "WARN" "Admission control config file is not set" "1.2.29"
-        fi
-    }
-
-    # 1.2.30: Ensure that the --secure-port argument is not set to 0
-    check_1_2_30() {
-        local secure_port
-        secure_port=$(echo "$apiserver_process" | grep -oP "(?<=--secure-port=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--secure-port[^ ]*" | cut -d'=' -f2)
-
-        if [[ "$secure_port" != "0" ]] && [[ -n "$secure_port" ]]; then
-            print_result "PASS" "--secure-port is set to $secure_port" "1.2.30"
-        elif check_argument_absent "--secure-port" "$apiserver_process"; then
-            print_result "PASS" "--secure-port not set (defaults to 6443)" "1.2.30"
-        else
-            print_result "FAIL" "--secure-port is set to 0" "1.2.30"
-        fi
-    }
-
-    # 1.2.31: Ensure that the --profiling argument is set to false
-    check_1_2_31() {
-        if check_argument_value "--profiling" "false" "$apiserver_process"; then
-            print_result "PASS" "--profiling is set to false" "1.2.31"
-        elif check_argument_absent "--profiling" "$apiserver_process"; then
-            # Default is true, so this should be explicitly set to false
-            print_result "WARN" "--profiling is not set (defaults to true, consider disabling)" "1.2.31"
-        else
-            print_result "FAIL" "--profiling is enabled" "1.2.31"
-        fi
-    }
-
-    # 1.2.32: Ensure that the --service-account-issuer argument is set
-    check_1_2_32() {
-        if check_argument_present "--service-account-issuer" "$apiserver_process"; then
-            print_result "PASS" "--service-account-issuer is set" "1.2.32"
-        else
-            print_result "WARN" "--service-account-issuer is not set" "1.2.32"
-        fi
-    }
-
-    # 1.2.33: Ensure that the --service-account-key-file argument is set
-    check_1_2_33() {
         if check_argument_present "--service-account-key-file" "$apiserver_process"; then
-            print_result "PASS" "--service-account-key-file is set" "1.2.33"
+            print_result "PASS" "--service-account-key-file is set" "1.2.22"
         else
-            print_result "WARN" "--service-account-key-file is not set" "1.2.33"
+            print_result "WARN" "--service-account-key-file is not set (may be appropriate for your environment)" "1.2.22"
         fi
     }
 
-    # 1.2.34: Ensure that the --service-account-signing-key-file argument is set
-    check_1_2_34() {
-        if check_argument_present "--service-account-signing-key-file" "$apiserver_process"; then
-            print_result "PASS" "--service-account-signing-key-file is set" "1.2.34"
+    #--------------------------------------------------------------------------------
+    #  etcd TLS 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.23: Ensure that the --etcd-certfile and --etcd-keyfile arguments are set as appropriate
+    check_1_2_23() {
+        local has_cert=false
+        local has_key=false
+        
+        if check_argument_present "--etcd-certfile" "$apiserver_process"; then
+            has_cert=true
+        fi
+        
+        if check_argument_present "--etcd-keyfile" "$apiserver_process"; then
+            has_key=true
+        fi
+        
+        if [[ "$has_cert" == "true" ]] && [[ "$has_key" == "true" ]]; then
+            print_result "PASS" "--etcd-certfile and --etcd-keyfile are set" "1.2.23"
         else
-            print_result "WARN" "--service-account-signing-key-file is not set" "1.2.34"
+            print_result "WARN" "--etcd-certfile and/or --etcd-keyfile are not set (may be appropriate for your environment)" "1.2.23"
         fi
     }
 
-    # Execute all 1.2 checks
+    #--------------------------------------------------------------------------------
+    #  TLS 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.24: Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate
+    check_1_2_24() {
+        local has_cert=false
+        local has_key=false
+        
+        if check_argument_present "--tls-cert-file" "$apiserver_process"; then
+            has_cert=true
+        fi
+        
+        if check_argument_present "--tls-private-key-file" "$apiserver_process"; then
+            has_key=true
+        fi
+        
+        if [[ "$has_cert" == "true" ]] && [[ "$has_key" == "true" ]]; then
+            print_result "PASS" "--tls-cert-file and --tls-private-key-file are set" "1.2.24"
+        else
+            print_result "WARN" "--tls-cert-file and/or --tls-private-key-file are not set (may be appropriate for your environment)" "1.2.24"
+        fi
+    }
+
+    # 1.2.25: Ensure that the --client-ca-file argument is set as appropriate
+    check_1_2_25() {
+        if check_argument_present "--client-ca-file" "$apiserver_process"; then
+            print_result "PASS" "--client-ca-file is set" "1.2.25"
+        else
+            print_result "WARN" "--client-ca-file is not set (may be appropriate for your environment)" "1.2.25"
+        fi
+    }
+
+    # 1.2.26: Ensure that the --etcd-cafile argument is set as appropriate
+    check_1_2_26() {
+        if check_argument_present "--etcd-cafile" "$apiserver_process"; then
+            print_result "PASS" "--etcd-cafile is set" "1.2.26"
+        else
+            print_result "WARN" "--etcd-cafile is not set (may be appropriate for your environment)" "1.2.26"
+        fi
+    }
+
+    #--------------------------------------------------------------------------------
+    #  加密配置检查
+    #--------------------------------------------------------------------------------
+
+    # 1.2.27: Ensure that the --encryption-provider-config argument is set as appropriate
+    check_1_2_27() {
+        if check_argument_present "--encryption-provider-config" "$apiserver_process"; then
+            print_result "PASS" "--encryption-provider-config is set" "1.2.27"
+        else
+            print_result "WARN" "--encryption-provider-config is not set (encryption at rest not enabled)" "1.2.27"
+        fi
+    }
+
+    # 1.2.28: Ensure that encryption providers are appropriately configured
+    check_1_2_28() {
+        local encryption_file
+        encryption_file=$(echo "$apiserver_process" | grep -oP "(?<=--encryption-provider-config=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--encryption-provider-config[^ ]*" | cut -d'=' -f2)
+
+        if [[ -n "$encryption_file" ]] && [[ -f "$encryption_file" ]]; then
+            if grep -q "aescbc:" "$encryption_file" 2>/dev/null; then
+                print_result "PASS" "Encryption providers are appropriately configured" "1.2.28"
+            else
+                print_result "WARN" "Encryption providers may not be appropriately configured" "1.2.28"
+            fi
+        else
+            print_result "WARN" "Encryption provider config file not found" "1.2.28"
+        fi
+    }
+
+    # 1.2.29: Ensure that the API Server only makes use of Strong Cryptographic Ciphers
+    check_1_2_29() {
+        # 这是一个手动检查项，需要检查 TLS 配置
+        print_result "WARN" "Strong Cryptographic Ciphers check requires manual verification" "1.2.29"
+    }
+
+    # 1.2.30: Ensure that the --service-account-extend-token-expiration parameter is set to false
+    check_1_2_30() {
+        if check_argument_absent "--service-account-extend-token-expiration" "$apiserver_process"; then
+            print_result "PASS" "--service-account-extend-token-expiration is not set (defaults to false)" "1.2.30"
+        elif check_argument_value "--service-account-extend-token-expiration" "false" "$apiserver_process"; then
+            print_result "PASS" "--service-account-extend-token-expiration is set to false" "1.2.30"
+        else
+            print_result "FAIL" "--service-account-extend-token-expiration is not set to false" "1.2.30"
+        fi
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 1.2 检查项
+    #--------------------------------------------------------------------------------
     check_1_2_1
     check_1_2_2
     check_1_2_3
@@ -1524,12 +1561,7 @@ run_section_1_2_checks() {
     check_1_2_28
     check_1_2_29
     check_1_2_30
-    check_1_2_31
-    check_1_2_32
-    check_1_2_33
-    check_1_2_34
 }
-
 #-----------------------------#
 #  Section 1.3: Controller Manager Configuration
 #-----------------------------#
@@ -1595,21 +1627,17 @@ run_section_1_3_checks() {
         if check_argument_present "--root-ca-file" "$controller_process"; then
             print_result "PASS" "--root-ca-file is set" "1.3.5"
         else
-            print_result "WARN" "--root-ca-file is not set" "1.3.5"
+            print_result "FAIL" "--root-ca-file is not set" "1.3.5"
         fi
     }
 
-    # 1.3.6: Ensure that the RotateKubeletServerCertificate argument is set
+    # 1.3.6: Ensure that the RotateKubeletServerCertificate argument is set to true
     check_1_3_6() {
         # Check if the feature gate is enabled
         if echo "$controller_process" | grep -q -- "feature-gates=.*RotateKubeletServerCertificate=true"; then
-            print_result "PASS" "RotateKubeletServerCertificate feature gate is enabled" "1.3.6"
-        # In newer versions, this is enabled by default
-        elif check_argument_absent "--feature-gates" "$controller_process" || \
-             check_argument_absent "RotateKubeletServerCertificate" "$controller_process"; then
-            print_result "WARN" "RotateKubeletServerCertificate feature gate not explicitly set (may be default)" "1.3.6"
+            print_result "PASS" "RotateKubeletServerCertificate is set to true" "1.3.6"
         else
-            print_result "FAIL" "RotateKubeletServerCertificate feature gate is not enabled" "1.3.6"
+            print_result "FAIL" "RotateKubeletServerCertificate is not set to true" "1.3.6"
         fi
     }
 
@@ -1694,40 +1722,73 @@ run_section_2_checks() {
         return
     fi
 
-    # 2.1: Ensure that the --client-cert-auth argument is set to true
+    #--------------------------------------------------------------------------------
+    #  客户端 TLS 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 2.1: Ensure that the --cert-file and --key-file arguments are set as appropriate
     check_2_1() {
-        if check_argument_value "--client-cert-auth" "true" "$etcd_process"; then
-            print_result "PASS" "--client-cert-auth is set to true" "2.1"
+        local has_cert=false
+        local has_key=false
+
+        if check_argument_present "--cert-file" "$etcd_process"; then
+            has_cert=true
+        fi
+
+        if check_argument_present "--key-file" "$etcd_process"; then
+            has_key=true
+        fi
+
+        if [[ "$has_cert" == "true" ]] && [[ "$has_key" == "true" ]]; then
+            print_result "PASS" "--cert-file and --key-file are set" "2.1"
         else
-            print_result "FAIL" "--client-cert-auth is not set to true" "2.1"
+            print_result "WARN" "--cert-file and/or --key-file are not set (may be appropriate for your environment)" "2.1"
         fi
     }
 
-    # 2.2: Ensure that the --trusted-ca-file argument is set
+    # 2.2: Ensure that the --client-cert-auth argument is set to true
     check_2_2() {
-        if check_argument_present "--trusted-ca-file" "$etcd_process"; then
-            print_result "PASS" "--trusted-ca-file is set" "2.2"
+        if check_argument_value "--client-cert-auth" "true" "$etcd_process"; then
+            print_result "PASS" "--client-cert-auth is set to true" "2.2"
         else
-            print_result "FAIL" "--trusted-ca-file is not set" "2.2"
+            print_result "FAIL" "--client-cert-auth is not set to true" "2.2"
         fi
     }
 
-    # 2.3: Ensure that the --cert-file and --key-file arguments are set
+    # 2.3: Ensure that the --auto-tls argument is not set to true
     check_2_3() {
-        if check_argument_present "--cert-file" "$etcd_process" && \
-           check_argument_present "--key-file" "$etcd_process"; then
-            print_result "PASS" "--cert-file and --key-file are set" "2.3"
+        # 检查 --auto-tls 是否设置，如果设置为 true 则失败
+        if echo "$etcd_process" | grep -q -- "--auto-tls=true"; then
+            print_result "FAIL" "--auto-tls is set to true" "2.3"
+        elif check_argument_absent "--auto-tls" "$etcd_process"; then
+            print_result "PASS" "--auto-tls is not set" "2.3"
         else
-            print_result "FAIL" "--cert-file and/or --key-file are not set" "2.3"
+            # --auto-tls 存在但不是 true，可能是 false
+            print_result "PASS" "--auto-tls is not set to true" "2.3"
         fi
     }
 
-    # 2.4: Ensure that the --auto-tls argument is NOT set
+    #--------------------------------------------------------------------------------
+    #  对等节点 TLS 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 2.4: Ensure that the --peer-cert-file and --peer-key-file arguments are set as appropriate
     check_2_4() {
-        if check_argument_absent "--auto-tls" "$etcd_process"; then
-            print_result "PASS" "--auto-tls is not set" "2.4"
+        local has_cert=false
+        local has_key=false
+
+        if check_argument_present "--peer-cert-file" "$etcd_process"; then
+            has_cert=true
+        fi
+
+        if check_argument_present "--peer-key-file" "$etcd_process"; then
+            has_key=true
+        fi
+
+        if [[ "$has_cert" == "true" ]] && [[ "$has_key" == "true" ]]; then
+            print_result "PASS" "--peer-cert-file and --peer-key-file are set" "2.4"
         else
-            print_result "FAIL" "--auto-tls is set (should not use auto TLS)" "2.4"
+            print_result "WARN" "--peer-cert-file and/or --peer-key-file are not set (may be appropriate for your environment)" "2.4"
         fi
     }
 
@@ -1740,26 +1801,32 @@ run_section_2_checks() {
         fi
     }
 
-    # 2.6: Ensure that the --peer-trusted-ca-file argument is set
+    # 2.6: Ensure that the --peer-auto-tls argument is not set to true
     check_2_6() {
-        if check_argument_present "--peer-trusted-ca-file" "$etcd_process"; then
-            print_result "PASS" "--peer-trusted-ca-file is set" "2.6"
+        # 检查 --peer-auto-tls 是否设置，如果设置为 true 则失败
+        if echo "$etcd_process" | grep -q -- "--peer-auto-tls=true"; then
+            print_result "FAIL" "--peer-auto-tls is set to true" "2.6"
+        elif check_argument_absent "--peer-auto-tls" "$etcd_process"; then
+            print_result "PASS" "--peer-auto-tls is not set" "2.6"
         else
-            print_result "FAIL" "--peer-trusted-ca-file is not set" "2.6"
+            # --peer-auto-tls 存在但不是 true，可能是 false
+            print_result "PASS" "--peer-auto-tls is not set to true" "2.6"
         fi
     }
 
-    # 2.7: Ensure that the --peer-cert-file and --peer-key-file arguments are set
+    #--------------------------------------------------------------------------------
+    #  CA 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 2.7: Ensure that a unique Certificate Authority is used for etcd (Manual)
     check_2_7() {
-        if check_argument_present "--peer-cert-file" "$etcd_process" && \
-           check_argument_present "--peer-key-file" "$etcd_process"; then
-            print_result "PASS" "--peer-cert-file and --peer-key-file are set" "2.7"
-        else
-            print_result "FAIL" "--peer-cert-file and/or --peer-key-file are not set" "2.7"
-        fi
+        # 手动检查项，需要管理员确认 etcd 使用独立的 CA
+        print_result "WARN" "Unique Certificate Authority for etcd requires manual verification" "2.7"
     }
 
-    # Execute all section 2 checks
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 2 检查项
+    #--------------------------------------------------------------------------------
     check_2_1
     check_2_2
     check_2_3
@@ -1790,120 +1857,50 @@ run_section_3_checks() {
         return
     fi
 
-    # 3.1 Authentication and Authorization
+    #--------------------------------------------------------------------------------
+    #  3.1 Authentication and Authorization
+    #--------------------------------------------------------------------------------
 
-    # 3.1.1: Ensure that the cluster-admin role is only used where required
+    # 3.1.1: Client certificate authentication should not be used for users (Manual)
     check_3_1_1() {
-        # Get all users/groups with cluster-admin role
-        local cluster_admin_users
-        cluster_admin_users=$(kubectl get clusterrolebindings -o json 2>/dev/null | jq -r '.items[] | select(.roleRef.name=="cluster-admin") | .subjects[]? | select(.kind=="User") | .name' 2>/dev/null)
-
-        if [[ -z "$cluster_admin_users" ]]; then
-            print_result "WARN" "No users with cluster-admin role found (check if default bindings are appropriate)" "3.1.1"
-        else
-            local count=0
-            while IFS= read -r user; do
-                if [[ -n "$user" ]]; then
-                    count=$((count + 1))
-                fi
-            done <<< "$cluster_admin_users"
-
-            if [[ $count -le 5 ]]; then
-                print_result "PASS" "$count users have cluster-admin role (review for necessity)" "3.1.1"
-            else
-                print_result "WARN" "$count users have cluster-admin role (consider reducing)" "3.1.1"
-            fi
-        fi
+        # 手动检查项，需要管理员确认没有用户使用客户端证书认证
+        print_result "WARN" "Client certificate authentication for users requires manual verification" "3.1.1"
     }
 
-    # 3.1.2: Ensure that the --authorization-mode argument includes Node
-    # Note: This is already checked in 1.2.8, skipping to avoid duplicate
+    # 3.1.2: Service account token authentication should not be used for users (Manual)
     check_3_1_2() {
-        # Placeholder - already covered in section 1.2
-        print_result "INFO" "Already checked in section 1.2.8" "3.1.2"
+        # 手动检查项，需要管理员确认没有用户使用服务账号令牌认证
+        print_result "WARN" "Service account token authentication for users requires manual verification" "3.1.2"
     }
 
-    # 3.1.3: Ensure that the --authorization-mode argument includes RBAC
-    # Note: This is already checked in 1.2.9, skipping to avoid duplicate
+    # 3.1.3: Bootstrap token authentication should not be used for users (Manual)
     check_3_1_3() {
-        # Placeholder - already covered in section 1.2
-        print_result "INFO" "Already checked in section 1.2.9" "3.1.3"
+        # 手动检查项，需要管理员确认没有用户使用 Bootstrap 令牌认证
+        print_result "WARN" "Bootstrap token authentication for users requires manual verification" "3.1.3"
     }
 
-    # 3.1.4: Ensure that the admission control plugin EventRateLimit is set
-    # Note: This is already checked in 1.2.10, skipping to avoid duplicate
-    check_3_1_4() {
-        # Placeholder - already covered in section 1.2
-        print_result "INFO" "Already checked in section 1.2.10" "3.1.4"
-    }
+    #--------------------------------------------------------------------------------
+    #  3.2 Logging
+    #--------------------------------------------------------------------------------
 
-    # 3.1.5: Ensure that the admission control plugin AlwaysAdmit is not set
-    # Note: This is already checked in 1.2.11, skipping to avoid duplicate
-    check_3_1_5() {
-        # Placeholder - already covered in section 1.2
-        print_result "INFO" "Already checked in section 1.2.11" "3.1.5"
-    }
-
-    # 3.1.6: Ensure that the admission control plugin AlwaysPullImages is set
-    # Note: This is already checked in 1.2.12, skipping to avoid duplicate
-    check_3_1_6() {
-        # Placeholder - already covered in section 1.2
-        print_result "INFO" "Already checked in section 1.2.12" "3.1.6"
-    }
-
-    # 3.2 Logging
-
-    # 3.2.1: Ensure that a minimal audit policy is created
+    # 3.2.1: Ensure that a minimal audit policy is created (Manual)
     check_3_2_1() {
-        # Check if audit policy is configured
-        local apiserver_process
-        apiserver_process=$(get_apiserver_args)
-
-        if check_argument_present "--audit-policy-file" "$apiserver_process"; then
-            local audit_policy_file
-            audit_policy_file=$(echo "$apiserver_process" | grep -oP "(?<=--audit-policy-file=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--audit-policy-file[^ ]*" | cut -d'=' -f2)
-
-            if [[ -f "$audit_policy_file" ]]; then
-                print_result "PASS" "Audit policy file exists at $audit_policy_file" "3.2.1"
-            else
-                print_result "WARN" "Audit policy file configured but not found at $audit_policy_file" "3.2.1"
-            fi
-        else
-            print_result "FAIL" "No audit policy file configured" "3.2.1"
-        fi
+        # 手动检查项，需要管理员确认已创建审计策略
+        print_result "WARN" "Minimal audit policy creation requires manual verification" "3.2.1"
     }
 
-    # 3.2.2: Ensure that the audit policy covers key actions
+    # 3.2.2: Ensure that the audit policy covers key security concerns (Manual)
     check_3_2_2() {
-        local apiserver_process
-        apiserver_process=$(get_apiserver_args)
-
-        if check_argument_present "--audit-policy-file" "$apiserver_process"; then
-            local audit_policy_file
-            audit_policy_file=$(echo "$apiserver_process" | grep -oP "(?<=--audit-policy-file=)[^ ]+" 2>/dev/null || echo "$apiserver_process" | grep -o -- "--audit-policy-file[^ ]*" | cut -d'=' -f2)
-
-            if [[ -f "$audit_policy_file" ]]; then
-                # Check if policy has key rules
-                if grep -q "rules" "$audit_policy_file" 2>/dev/null; then
-                    print_result "PASS" "Audit policy contains rules" "3.2.2"
-                else
-                    print_result "WARN" "Audit policy may not be properly configured" "3.2.2"
-                fi
-            else
-                print_result "WARN" "Audit policy file not found" "3.2.2"
-            fi
-        else
-            print_result "FAIL" "No audit policy file configured" "3.2.2"
-        fi
+        # 手动检查项，需要管理员确认审计策略覆盖关键安全事件
+        print_result "WARN" "Audit policy coverage of key security concerns requires manual verification" "3.2.2"
     }
 
-    # Execute all section 3 checks
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 3 检查项
+    #--------------------------------------------------------------------------------
     check_3_1_1
     check_3_1_2
     check_3_1_3
-    check_3_1_4
-    check_3_1_5
-    check_3_1_6
     check_3_2_1
     check_3_2_2
 }
@@ -1923,6 +1920,11 @@ run_master_checks() {
     run_section_2_checks
     run_section_3_checks
     run_section_5_checks
+    run_section_5_2_checks
+    run_section_5_3_checks
+    run_section_5_4_checks
+    run_section_5_5_checks
+    run_section_5_6_checks
 }
 
 #-----------------------------#
@@ -1934,137 +1936,152 @@ run_section_4_1_checks() {
     echo -e "${BLUE}Section 4.1 - Worker Node Configuration Files${NC}"
     echo -e "${BLUE}=================================================${NC}\n"
 
-    # 4.1.1: Ensure that the kubelet configuration file has permissions set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  kubelet 服务文件检查
+    #--------------------------------------------------------------------------------
+
+    # 4.1.1: Ensure that the kubelet service file permissions are set to 600 or more restrictive
     check_4_1_1() {
-        local file="/var/lib/kubelet/config.yaml"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "Kubelet config file permissions are 644 or more restrictive" "4.1.1"
-        else
-            local status=$?
-            if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Kubelet config file not found at $file" "4.1.1"
-            else
-                print_result "FAIL" "Kubelet config file permissions are not 644 or more restrictive" "4.1.1"
-            fi
-        fi
-    }
-
-    # 4.1.2: Ensure that the kubelet configuration file ownership is set to root:root
-    check_4_1_2() {
-        local file="/var/lib/kubelet/config.yaml"
-        if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "Kubelet config file ownership is root:root" "4.1.2"
-        else
-            local status=$?
-            if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Kubelet config file not found at $file" "4.1.2"
-            else
-                print_result "FAIL" "Kubelet config file ownership is not root:root" "4.1.2"
-            fi
-        fi
-    }
-
-    # 4.1.3: Ensure that the kubelet service file permissions are set to 644 or more restrictive
-    check_4_1_3() {
         local file="/etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
         if [[ ! -f "$file" ]]; then
             # Try alternative locations
             file="/etc/systemd/system/kubelet.service"
         fi
 
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "Kubelet service file permissions are 644 or more restrictive" "4.1.3"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "Kubelet service file permissions are 600 or more restrictive" "4.1.1"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Kubelet service file not found" "4.1.3"
+                print_result "WARN" "Kubelet service file not found" "4.1.1"
             else
-                print_result "FAIL" "Kubelet service file permissions are not 644 or more restrictive" "4.1.3"
+                print_result "FAIL" "Kubelet service file permissions are not 600 or more restrictive" "4.1.1"
             fi
         fi
     }
 
-    # 4.1.4: Ensure that the kubelet service file ownership is set to root:root
-    check_4_1_4() {
+    # 4.1.2: Ensure that the kubelet service file ownership is set to root:root
+    check_4_1_2() {
         local file="/etc/systemd/system/kubelet.service.d/10-kubeadm.conf"
         if [[ ! -f "$file" ]]; then
             file="/etc/systemd/system/kubelet.service"
         fi
 
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "Kubelet service file ownership is root:root" "4.1.4"
+            print_result "PASS" "Kubelet service file ownership is root:root" "4.1.2"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "Kubelet service file not found" "4.1.4"
+                print_result "WARN" "Kubelet service file not found" "4.1.2"
             else
-                print_result "FAIL" "Kubelet service file ownership is not root:root" "4.1.4"
+                print_result "FAIL" "Kubelet service file ownership is not root:root" "4.1.2"
             fi
         fi
     }
 
-    # 4.1.5: Ensure that the proxy kubeconfig file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  proxy kubeconfig 文件检查
+    #--------------------------------------------------------------------------------
+
+    # 4.1.3: If proxy kubeconfig file exists ensure permissions are set to 600 or more restrictive (Manual)
+    check_4_1_3() {
+        # 手动检查项，proxy kubeconfig 文件位置可能不同
+        print_result "WARN" "Proxy kubeconfig file permissions require manual verification" "4.1.3"
+    }
+
+    # 4.1.4: If proxy kubeconfig file exists ensure ownership is set to root:root (Manual)
+    check_4_1_4() {
+        # 手动检查项，proxy kubeconfig 文件所有权需要手动验证
+        print_result "WARN" "Proxy kubeconfig file ownership requires manual verification" "4.1.4"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  kubelet.conf 文件检查
+    #--------------------------------------------------------------------------------
+
+    # 4.1.5: Ensure that the --kubeconfig kubelet.conf file permissions are set to 600 or more restrictive
     check_4_1_5() {
-        # Check if running on worker node (proxy not usually on workers)
-        local file="/etc/kubernetes/proxy.conf"
-        if [[ ! -f "$file" ]]; then
-            print_result "WARN" "Proxy config file not found at $file (may not be applicable)" "4.1.5"
-            return
-        fi
-
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "Proxy config file permissions are 644 or more restrictive" "4.1.5"
+        local file="/etc/kubernetes/kubelet.conf"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "kubelet.conf file permissions are 600 or more restrictive" "4.1.5"
         else
-            print_result "FAIL" "Proxy config file permissions are not 644 or more restrictive" "4.1.5"
+            local status=$?
+            if [[ $status -eq 2 ]]; then
+                print_result "WARN" "kubelet.conf file not found at $file" "4.1.5"
+            else
+                print_result "FAIL" "kubelet.conf file permissions are not 600 or more restrictive" "4.1.5"
+            fi
         fi
     }
 
-    # 4.1.6: Ensure that the proxy kubeconfig file ownership is set to root:root
+    # 4.1.6: Ensure that the --kubeconfig kubelet.conf file ownership is set to root:root
     check_4_1_6() {
-        local file="/etc/kubernetes/proxy.conf"
-        if [[ ! -f "$file" ]]; then
-            print_result "WARN" "Proxy config file not found at $file (may not be applicable)" "4.1.6"
-            return
-        fi
-
+        local file="/etc/kubernetes/kubelet.conf"
         if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "Proxy config file ownership is root:root" "4.1.6"
+            print_result "PASS" "kubelet.conf file ownership is root:root" "4.1.6"
         else
-            print_result "FAIL" "Proxy config file ownership is not root:root" "4.1.6"
+            local status=$?
+            if [[ $status -eq 2 ]]; then
+                print_result "WARN" "kubelet.conf file not found at $file" "4.1.6"
+            else
+                print_result "FAIL" "kubelet.conf file ownership is not root:root" "4.1.6"
+            fi
         fi
     }
 
-    # 4.1.7: Ensure that the kubelet.conf file permissions are set to 644 or more restrictive
+    #--------------------------------------------------------------------------------
+    #  CA 文件检查
+    #--------------------------------------------------------------------------------
+
+    # 4.1.7: Ensure that the certificate authorities file permissions are set to 644 or more restrictive (Manual)
     check_4_1_7() {
-        local file="/etc/kubernetes/kubelet.conf"
-        if check_file_permissions "$file" 644; then
-            print_result "PASS" "kubelet.conf file permissions are 644 or more restrictive" "4.1.7"
-        else
-            local status=$?
-            if [[ $status -eq 2 ]]; then
-                print_result "WARN" "kubelet.conf file not found at $file" "4.1.7"
-            else
-                print_result "FAIL" "kubelet.conf file permissions are not 644 or more restrictive" "4.1.7"
-            fi
-        fi
+        # 手动检查项，CA 文件位置可能不同
+        print_result "WARN" "Certificate authorities file permissions require manual verification" "4.1.7"
     }
 
-    # 4.1.8: Ensure that the kubelet.conf file ownership is set to root:root
+    # 4.1.8: Ensure that the client certificate authorities file ownership is set to root:root (Manual)
     check_4_1_8() {
-        local file="/etc/kubernetes/kubelet.conf"
-        if check_file_ownership "$file" "root" "root"; then
-            print_result "PASS" "kubelet.conf file ownership is root:root" "4.1.8"
+        # 手动检查项，CA 文件所有权需要手动验证
+        print_result "WARN" "Certificate authorities file ownership requires manual verification" "4.1.8"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  kubelet config.yaml 文件检查
+    #--------------------------------------------------------------------------------
+
+    # 4.1.9: If the kubelet config.yaml configuration file is being used validate permissions set to 600 or more restrictive
+    check_4_1_9() {
+        local file="/var/lib/kubelet/config.yaml"
+        if check_file_permissions "$file" 600; then
+            print_result "PASS" "Kubelet config.yaml file permissions are 600 or more restrictive" "4.1.9"
         else
             local status=$?
             if [[ $status -eq 2 ]]; then
-                print_result "WARN" "kubelet.conf file not found at $file" "4.1.8"
+                print_result "WARN" "Kubelet config.yaml file not found at $file" "4.1.9"
             else
-                print_result "FAIL" "kubelet.conf file ownership is not root:root" "4.1.8"
+                print_result "FAIL" "Kubelet config.yaml file permissions are not 600 or more restrictive" "4.1.9"
             fi
         fi
     }
 
-    # Execute all 4.1 checks
+    # 4.1.10: If the kubelet config.yaml configuration file is being used validate file ownership is set to root:root
+    check_4_1_10() {
+        local file="/var/lib/kubelet/config.yaml"
+        if check_file_ownership "$file" "root" "root"; then
+            print_result "PASS" "Kubelet config.yaml file ownership is root:root" "4.1.10"
+        else
+            local status=$?
+            if [[ $status -eq 2 ]]; then
+                print_result "WARN" "Kubelet config.yaml file not found at $file" "4.1.10"
+            else
+                print_result "FAIL" "Kubelet config.yaml file ownership is not root:root" "4.1.10"
+            fi
+        fi
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 4.1 检查项
+    #--------------------------------------------------------------------------------
     check_4_1_1
     check_4_1_2
     check_4_1_3
@@ -2073,6 +2090,8 @@ run_section_4_1_checks() {
     check_4_1_6
     check_4_1_7
     check_4_1_8
+    check_4_1_9
+    check_4_1_10
 }
 
 run_section_4_2_checks() {
@@ -2092,20 +2111,9 @@ run_section_4_2_checks() {
         return
     fi
 
-    # Helper function to check kubelet config value
-    check_kubelet_config_value() {
-        local key=$1
-        local expected_value=$2
-        local config=$3
-
-        if echo "$config" | grep -q "${key}: ${expected_value}"; then
-            return 0
-        elif echo "$config" | grep -q "${key}: ${expected_value}"; then
-            return 0
-        else
-            return 1
-        fi
-    }
+    #--------------------------------------------------------------------------------
+    #  认证和授权检查
+    #--------------------------------------------------------------------------------
 
     # 4.2.1: Ensure that the --anonymous-auth argument is set to false
     check_4_2_1() {
@@ -2135,258 +2143,128 @@ run_section_4_2_checks() {
         if [[ "$auth_mode" != "AlwaysAllow" ]] && [[ -n "$auth_mode" ]]; then
             print_result "PASS" "authorization-mode is not set to AlwaysAllow" "4.2.2"
         elif [[ -z "$auth_mode" ]]; then
-            print_result "WARN" "authorization-mode not found (may use default)" "4.2.2"
+            print_result "PASS" "authorization-mode not set (uses default)" "4.2.2"
         else
             print_result "FAIL" "authorization-mode is set to AlwaysAllow" "4.2.2"
         fi
     }
 
-    # 4.2.3: Ensure that the --client-ca-file argument is set
+    # 4.2.3: Ensure that the --client-ca-file argument is set as appropriate
     check_4_2_3() {
         if check_argument_present "--client-ca-file" "$kubelet_process"; then
             print_result "PASS" "--client-ca-file is set" "4.2.3"
         elif echo "$kubelet_config" | grep -q "clientCAFile:"; then
             print_result "PASS" "clientCAFile is set in config" "4.2.3"
         else
-            print_result "FAIL" "--client-ca-file is not set" "4.2.3"
+            print_result "WARN" "--client-ca-file is not set (may be appropriate for your environment)" "4.2.3"
         fi
     }
 
-    # 4.2.4: Ensure that the --read-only-port argument is set to 0
+    #--------------------------------------------------------------------------------
+    #  端口和网络配置检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.4: Verify that if defined, readOnlyPort is set to 0 (Manual)
     check_4_2_4() {
-        if check_argument_value "--read-only-port" "0" "$kubelet_process"; then
-            print_result "PASS" "--read-only-port is set to 0" "4.2.4"
-        elif echo "$kubelet_config" | grep -q "readOnlyPort: 0"; then
-            print_result "PASS" "readOnlyPort is set to 0 in config" "4.2.4"
-        elif check_argument_absent "--read-only-port" "$kubelet_process" && ! echo "$kubelet_config" | grep -q "readOnlyPort:"; then
-            print_result "PASS" "--read-only-port not set (defaults to 0 in newer versions)" "4.2.4"
-        else
-            print_result "FAIL" "--read-only-port is not set to 0" "4.2.4"
-        fi
+        # 手动检查项，需要验证 readOnlyPort 设置
+        print_result "WARN" "readOnlyPort configuration requires manual verification" "4.2.4"
     }
 
-    # 4.2.5: Ensure that the --streaming-connection-idle-timeout argument is not set to 0
+    # 4.2.5: Ensure that the --streaming-connection-idle-timeout argument is not set to 0 (Manual)
     check_4_2_5() {
-        local timeout=""
-
-        if echo "$kubelet_process" | grep -q -- "--streaming-connection-idle-timeout="; then
-            timeout=$(echo "$kubelet_process" | grep -oP "(?<=--streaming-connection-idle-timeout=)[^ ]+" 2>/dev/null)
-        elif echo "$kubelet_config" | grep -q "streamingConnectionIdleTimeout:"; then
-            timeout=$(echo "$kubelet_config" | grep "streamingConnectionIdleTimeout:" | grep -oP ': \K.*' 2>/dev/null)
-        fi
-
-        if [[ "$timeout" != "0" ]] && [[ -n "$timeout" ]]; then
-            print_result "PASS" "--streaming-connection-idle-timeout is not set to 0" "4.2.5"
-        elif [[ -z "$timeout" ]]; then
-            print_result "PASS" "--streaming-connection-idle-timeout not set (uses default)" "4.2.5"
-        else
-            print_result "FAIL" "--streaming-connection-idle-timeout is set to 0" "4.2.5"
-        fi
+        # 手动检查项，需要验证 streaming-connection-idle-timeout 设置
+        print_result "WARN" "streaming-connection-idle-timeout configuration requires manual verification" "4.2.5"
     }
 
-    # 4.2.6: Ensure that the --protect-kernel-defaults argument is set to true
+    #--------------------------------------------------------------------------------
+    #  iptables 和网络配置检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.6: Ensure that the --make-iptables-util-chains argument is set to true
     check_4_2_6() {
-        if check_argument_value "--protect-kernel-defaults" "true" "$kubelet_process"; then
-            print_result "PASS" "--protect-kernel-defaults is set to true" "4.2.6"
-        elif echo "$kubelet_config" | grep -q "protectKernelDefaults: true"; then
-            print_result "PASS" "protectKernelDefaults is set to true in config" "4.2.6"
-        else
-            print_result "FAIL" "--protect-kernel-defaults is not set to true" "4.2.6"
-        fi
-    }
-
-    # 4.2.7: Ensure that the --make-iptables-util-chains argument is set to true
-    check_4_2_7() {
         if check_argument_value "--make-iptables-util-chains" "true" "$kubelet_process"; then
-            print_result "PASS" "--make-iptables-util-chains is set to true" "4.2.7"
+            print_result "PASS" "--make-iptables-util-chains is set to true" "4.2.6"
         elif echo "$kubelet_config" | grep -q "makeIPTablesUtilChains: true"; then
-            print_result "PASS" "makeIPTablesUtilChains is set to true in config" "4.2.7"
+            print_result "PASS" "makeIPTablesUtilChains is set to true in config" "4.2.6"
         elif check_argument_absent "--make-iptables-util-chains" "$kubelet_process" && ! echo "$kubelet_config" | grep -q "makeIPTablesUtilChains:"; then
-            print_result "PASS" "--make-iptables-util-chains not set (defaults to true)" "4.2.7"
+            print_result "PASS" "--make-iptables-util-chains not set (defaults to true)" "4.2.6"
         else
-            print_result "WARN" "--make-iptables-util-chains is not set to true" "4.2.7"
+            print_result "FAIL" "--make-iptables-util-chains is not set to true" "4.2.6"
         fi
     }
 
-    # 4.2.8: Ensure that the --hostname-override argument is not set
+    #--------------------------------------------------------------------------------
+    #  其他配置检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.7: Ensure that the --hostname-override argument is not set (Manual)
+    check_4_2_7() {
+        # 手动检查项，需要验证 hostname-override 配置
+        print_result "WARN" "hostname-override configuration requires manual verification" "4.2.7"
+    }
+
+    # 4.2.8: Ensure that the eventRecordQPS argument is set to a level which ensures appropriate event capture (Manual)
     check_4_2_8() {
-        if check_argument_absent "--hostname-override" "$kubelet_process"; then
-            print_result "PASS" "--hostname-override is not set" "4.2.8"
-        else
-            print_result "WARN" "--hostname-override is set (ensure proper configuration)" "4.2.8"
-        fi
+        # 手动检查项，需要验证 eventRecordQPS 配置
+        print_result "WARN" "eventRecordQPS configuration requires manual verification" "4.2.8"
     }
 
-    # 4.2.9: Ensure that the --event-qps argument is set to 0 or a level which ensures appropriate event capture
+    #--------------------------------------------------------------------------------
+    #  TLS 配置检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.9: Ensure that the --tls-cert-file and --tls-private-key-file arguments are set as appropriate (Manual)
     check_4_2_9() {
-        local event_qps=""
-
-        if echo "$kubelet_process" | grep -q -- "--event-qps="; then
-            event_qps=$(echo "$kubelet_process" | grep -oP "(?<=--event-qps=)[^ ]+" 2>/dev/null)
-        elif echo "$kubelet_config" | grep -q "eventRecordQPS:"; then
-            event_qps=$(echo "$kubelet_config" | grep "eventRecordQPS:" | grep -oP ': \K.*' 2>/dev/null)
-        fi
-
-        if [[ -n "$event_qps" ]]; then
-            if [[ "$event_qps" -eq 0 ]] || [[ "$event_qps" -ge 5 ]]; then
-                print_result "PASS" "--event-qps is set to $event_qps" "4.2.9"
-            else
-                print_result "WARN" "--event-qps is set to $event_qps (may be too low)" "4.2.9"
-            fi
-        else
-            print_result "WARN" "--event-qps not set (uses default)" "4.2.9"
-        fi
+        # 手动检查项，需要验证 TLS 证书文件配置
+        print_result "WARN" "TLS certificate file configuration requires manual verification" "4.2.9"
     }
 
-    # 4.2.10: Ensure that the --tls-cert-file and --tls-private-key-file arguments are set
+    #--------------------------------------------------------------------------------
+    #  证书轮换检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.10: Ensure that the --rotate-certificates argument is not set to false
     check_4_2_10() {
-        if check_argument_present "--tls-cert-file" "$kubelet_process" && \
-           check_argument_present "--tls-private-key-file" "$kubelet_process"; then
-            print_result "PASS" "--tls-cert-file and --tls-private-key-file are set" "4.2.10"
-        elif echo "$kubelet_config" | grep -q "tlsCertFile:" && echo "$kubelet_config" | grep -q "tlsPrivateKeyFile:"; then
-            print_result "PASS" "tlsCertFile and tlsPrivateKeyFile are set in config" "4.2.10"
-        else
-            print_result "FAIL" "TLS cert and key files are not properly set" "4.2.10"
-        fi
-    }
-
-    # 4.2.11: Ensure that the --rotate-certificates argument is not set to false
-    check_4_2_11() {
         if check_argument_value "--rotate-certificates" "false" "$kubelet_process"; then
-            print_result "FAIL" "--rotate-certificates is set to false" "4.2.11"
-        elif check_argument_value "--rotate-certificates" "true" "$kubelet_process"; then
-            print_result "PASS" "--rotate-certificates is set to true" "4.2.11"
-        elif echo "$kubelet_config" | grep -q "rotateCertificates: true"; then
-            print_result "PASS" "rotateCertificates is set to true in config" "4.2.11"
+            print_result "FAIL" "--rotate-certificates is set to false" "4.2.10"
+        elif echo "$kubelet_config" | grep -q "rotateCertificates: false"; then
+            print_result "FAIL" "rotateCertificates is set to false in config" "4.2.10"
         else
-            print_result "WARN" "--rotate-certificates not explicitly set" "4.2.11"
+            print_result "PASS" "--rotate-certificates is not set to false" "4.2.10"
         fi
     }
 
-    # 4.2.12: Ensure that the RotateKubeletServerCertificate argument is set
+    # 4.2.11: Verify that the RotateKubeletServerCertificate argument is set to true (Manual)
+    check_4_2_11() {
+        # 手动检查项，需要验证 RotateKubeletServerCertificate 配置
+        print_result "WARN" "RotateKubeletServerCertificate configuration requires manual verification" "4.2.11"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  安全配置检查
+    #--------------------------------------------------------------------------------
+
+    # 4.2.12: Ensure that the Kubelet only makes use of Strong Cryptographic Ciphers (Manual)
     check_4_2_12() {
-        if echo "$kubelet_process" | grep -q -- "feature-gates=.*RotateKubeletServerCertificate=true"; then
-            print_result "PASS" "RotateKubeletServerCertificate feature gate is enabled" "4.2.12"
-        elif echo "$kubelet_config" | grep -q "RotateKubeletServerCertificate: true"; then
-            print_result "PASS" "RotateKubeletServerCertificate is enabled in config" "4.2.12"
-        else
-            print_result "WARN" "RotateKubeletServerCertificate not explicitly enabled" "4.2.12"
-        fi
+        # 手动检查项，需要验证加密套件配置
+        print_result "WARN" "Strong Cryptographic Ciphers configuration requires manual verification" "4.2.12"
     }
 
-    # 4.2.13: Ensure that the --bind-address argument is set to 127.0.0.1
+    # 4.2.13: Ensure that a limit is set on pod PIDs (Manual)
     check_4_2_13() {
-        if check_argument_value "--bind-address" "127.0.0.1" "$kubelet_process"; then
-            print_result "PASS" "--bind-address is set to 127.0.0.1" "4.2.13"
-        elif echo "$kubelet_config" | grep -q "address: 127.0.0.1"; then
-            print_result "PASS" "address is set to 127.0.0.1 in config" "4.2.13"
-        else
-            print_result "WARN" "--bind-address is not set to 127.0.0.1" "4.2.13"
-        fi
+        # 手动检查项，需要验证 Pod PID 限制配置
+        print_result "WARN" "Pod PIDs limit configuration requires manual verification" "4.2.13"
     }
 
-    # 4.2.14: Ensure that the --cluster-dns argument is set
+    # 4.2.14: Ensure that the --seccomp-default parameter is set to true (Manual)
     check_4_2_14() {
-        if check_argument_present "--cluster-dns" "$kubelet_process"; then
-            print_result "PASS" "--cluster-dns is set" "4.2.14"
-        elif echo "$kubelet_config" | grep -q "clusterDNS:"; then
-            print_result "PASS" "clusterDNS is set in config" "4.2.14"
-        else
-            print_result "WARN" "--cluster-dns is not set" "4.2.14"
-        fi
+        # 手动检查项，需要验证 seccomp-default 配置
+        print_result "WARN" "seccomp-default configuration requires manual verification" "4.2.14"
     }
 
-    # 4.2.15: Ensure that the --cluster-domain argument is set
-    check_4_2_15() {
-        if check_argument_present "--cluster-domain" "$kubelet_process"; then
-            print_result "PASS" "--cluster-domain is set" "4.2.15"
-        elif echo "$kubelet_config" | grep -q "clusterDomain:"; then
-            print_result "PASS" "clusterDomain is set in config" "4.2.15"
-        else
-            print_result "WARN" "--cluster-domain is not set" "4.2.15"
-        fi
-    }
-
-    # 4.2.16: Ensure that the --cgroup-driver argument is set
-    check_4_2_16() {
-        if check_argument_present "--cgroup-driver" "$kubelet_process"; then
-            print_result "PASS" "--cgroup-driver is set" "4.2.16"
-        elif echo "$kubelet_config" | grep -q "cgroupDriver:"; then
-            print_result "PASS" "cgroupDriver is set in config" "4.2.16"
-        else
-            print_result "WARN" "--cgroup-driver is not set" "4.2.16"
-        fi
-    }
-
-    # 4.2.17: Ensure that the --network-plugin argument is set
-    check_4_2_17() {
-        if check_argument_present "--network-plugin" "$kubelet_process"; then
-            print_result "PASS" "--network-plugin is set" "4.2.17"
-        elif echo "$kubelet_config" | grep -q "networkPlugin:"; then
-            print_result "PASS" "networkPlugin is set in config" "4.2.17"
-        else
-            print_result "WARN" "--network-plugin is not set" "4.2.17"
-        fi
-    }
-
-    # 4.2.18: Ensure that the --cni-conf-dir argument is set when using network plugin
-    check_4_2_18() {
-        if check_argument_present "--cni-conf-dir" "$kubelet_process"; then
-            print_result "PASS" "--cni-conf-dir is set" "4.2.18"
-        elif echo "$kubelet_config" | grep -q "cniConfDir:"; then
-            print_result "PASS" "cniConfDir is set in config" "4.2.18"
-        else
-            print_result "WARN" "--cni-conf-dir is not set" "4.2.18"
-        fi
-    }
-
-    # 4.2.19: Ensure that the --volume-plugin-dir argument is set
-    check_4_2_19() {
-        if check_argument_present "--volume-plugin-dir" "$kubelet_process"; then
-            print_result "PASS" "--volume-plugin-dir is set" "4.2.19"
-        elif echo "$kubelet_config" | grep -q "volumePluginDir:"; then
-            print_result "PASS" "volumePluginDir is set in config" "4.2.19"
-        else
-            print_result "WARN" "--volume-plugin-dir is not set (may use default)" "4.2.19"
-        fi
-    }
-
-    # 4.2.20: Ensure that the --pod-infra-container-image argument is set
-    check_4_2_20() {
-        if check_argument_present "--pod-infra-container-image" "$kubelet_process"; then
-            print_result "PASS" "--pod-infra-container-image is set" "4.2.20"
-        elif echo "$kubelet_config" | grep -q "podInfraContainerImage:"; then
-            print_result "PASS" "podInfraContainerImage is set in config" "4.2.20"
-        else
-            print_result "WARN" "--pod-infra-container-image is not set (may use default)" "4.2.20"
-        fi
-    }
-
-    # 4.2.21: Ensure that the --allow-privileged argument is set
-    check_4_2_21() {
-        # Note: In newer versions, privileged is controlled via Pod Security Standards
-        if check_argument_value "--allow-privileged" "false" "$kubelet_process"; then
-            print_result "PASS" "--allow-privileged is set to false" "4.2.21"
-        elif check_argument_value "--allow-privileged" "true" "$kubelet_process"; then
-            print_result "WARN" "--allow-privileged is set to true (review if required)" "4.2.21"
-        elif check_argument_absent "--allow-privileged" "$kubelet_process"; then
-            print_result "PASS" "--allow-privileged not set (may use default)" "4.2.21"
-        else
-            print_result "WARN" "--allow-privileged configuration unknown" "4.2.21"
-        fi
-    }
-
-    # 4.2.22: Ensure that the --host-network-sources argument is not set
-    check_4_2_22() {
-        # Note: This argument is deprecated in newer versions
-        if check_argument_absent "--host-network-sources" "$kubelet_process"; then
-            print_result "PASS" "--host-network-sources is not set" "4.2.22"
-        else
-            print_result "WARN" "--host-network-sources is set (review configuration)" "4.2.22"
-        fi
-    }
-
-    # Execute all 4.2 checks
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 4.2 检查项
+    #--------------------------------------------------------------------------------
     check_4_2_1
     check_4_2_2
     check_4_2_3
@@ -2401,14 +2279,6 @@ run_section_4_2_checks() {
     check_4_2_12
     check_4_2_13
     check_4_2_14
-    check_4_2_15
-    check_4_2_16
-    check_4_2_17
-    check_4_2_18
-    check_4_2_19
-    check_4_2_20
-    check_4_2_21
-    check_4_2_22
 }
 
 #-----------------------------#
@@ -2659,406 +2529,440 @@ run_worker_checks() {
 
 run_section_5_checks() {
     echo -e "\n${BLUE}=================================================${NC}"
-    echo -e "${BLUE}Section 5 - Kubernetes Policies${NC}"
+    echo -e "${BLUE}Section 5.1 - Kubernetes Policies${NC}"
     echo -e "${BLUE}=================================================${NC}\n"
 
     # Check if kubectl is available
     if ! command -v kubectl &> /dev/null; then
-        print_result "WARN" "kubectl not found. Skipping policy checks." "5.x"
+        print_result "WARN" "kubectl not found. Skipping policy checks." "5.1.x"
         return
     fi
 
     # Check if we can connect to the cluster
     if ! kubectl get nodes &> /dev/null; then
-        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping policy checks." "5.x"
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping policy checks." "5.1.x"
         return
     fi
 
-    # 5.1: Ensure that the cluster has at least one active Pod Security Policy (PSP)
-    # Note: PSP is deprecated in Kubernetes 1.25+, replaced by Pod Security Standards
-    check_5_1() {
-        # Check if PSP is available (older Kubernetes versions)
-        local psp_count
-        psp_count=$(kubectl get psp -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")
-
-        if [[ "$psp_count" -gt 0 ]]; then
-            print_result "PASS" "Found $psp_count Pod Security Policies" "5.1"
-        else
-            # Check for Pod Security Standards (newer versions)
-            local pss_labels
-            pss_labels=$(kubectl get ns -o json 2>/dev/null | jq -r '.items[].metadata.labels."pod-security.kubernetes.io/enforce"' 2>/dev/null)
-
-            if [[ -n "$pss_labels" ]]; then
-                print_result "PASS" "Pod Security Standards are configured (PSP deprecated)" "5.1"
-            else
-                print_result "WARN" "No Pod Security Policies or Pod Security Standards found" "5.1"
-            fi
-        fi
-    }
-
-    # 5.2: Ensure that the Pod Security Policy (PSS) is configured to restrict privileged containers
-    check_5_2() {
-        # Check for Pod Security Standards
-        local enforce_level
-        enforce_level=$(kubectl get ns -o json 2>/dev/null | jq -r '.items[] | select(.metadata.labels."pod-security.kubernetes.io/enforce" != null) | .metadata.name' 2>/dev/null)
-
-        if [[ -n "$enforce_level" ]]; then
-            local count=0
-            while IFS= read -r ns; do
-                if [[ -n "$ns" ]]; then
-                    count=$((count + 1))
-                fi
-            done <<< "$enforce_level"
-
-            print_result "PASS" "$count namespaces have Pod Security Standards enforced" "5.2"
-        else
-            print_result "WARN" "No namespaces with Pod Security Standards enforcement found" "5.2"
-        fi
-    }
-
-    # 5.3: Ensure that the cluster has Network Policies configured
-    check_5_3() {
-        local namespaces_with_policy=0
-        local total_namespaces=0
-
-        local namespaces
-        namespaces=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
-
-        for ns in $namespaces; do
-            total_namespaces=$((total_namespaces + 1))
-            local policy_count
-            policy_count=$(kubectl get networkpolicy -n "$ns" -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")
-
-            if [[ "$policy_count" -gt 0 ]]; then
-                namespaces_with_policy=$((namespaces_with_policy + 1))
-            fi
-        done
-
-        if [[ $namespaces_with_policy -gt 0 ]]; then
-            print_result "PASS" "$namespaces_with_policy of $total_namespaces namespaces have Network Policies" "5.3"
-        else
-            print_result "WARN" "No namespaces have Network Policies configured" "5.3"
-        fi
-    }
-
-    # 5.4: Ensure that the default namespace is not used for user workloads
-    check_5_4() {
-        local pod_count
-        pod_count=$(kubectl get pods -n default -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")
-
-        # Filter out system pods like kube-proxy, coredns, etc.
-        local user_pods
-        user_pods=$(kubectl get pods -n default -o json 2>/dev/null | jq -r '.items[] | select(.metadata.name | test("kube-proxy|coredns|etcd|local-path-provisioner") | not) | .metadata.name' 2>/dev/null)
-
-        local user_pod_count=0
-        if [[ -n "$user_pods" ]]; then
-            user_pod_count=$(echo "$user_pods" | wc -l)
-        fi
-
-        if [[ $user_pod_count -eq 0 ]]; then
-            print_result "PASS" "No user workloads found in default namespace" "5.4"
-        else
-            print_result "WARN" "$user_pod_count user workload(s) found in default namespace" "5.4"
-        fi
-    }
-
-    # 5.5: Ensure that the --authorization-mode argument includes RBAC
-    # Note: This is already checked in section 1.2.9
-    check_5_5() {
-        print_result "INFO" "Already checked in section 1.2.9" "5.5"
-    }
-
-    # 5.6: Ensure that the admission control plugin ServiceAccount is set
-    # Note: This is already checked in section 1.2.14
-    check_5_6() {
-        print_result "INFO" "Already checked in section 1.2.14" "5.6"
-    }
-
     #--------------------------------------------------------------------------------
-    #  Section 5.1: RBAC and Least Privilege (Additional checks from official standard)
+    #  RBAC 和最小权限检查
     #--------------------------------------------------------------------------------
 
-    # 5.1.2: Minimize access to secrets
+    # 5.1.1: Ensure that the cluster-admin role is only used where required (Manual)
+    check_5_1_1() {
+        # 手动检查项，需要验证 cluster-admin 角色的使用
+        print_result "WARN" "cluster-admin role usage requires manual verification" "5.1.1"
+    }
+
+    # 5.1.2: Minimize access to secrets (Manual)
     check_5_1_2() {
-        # Check for ClusterRoleBindings that grant excessive secret access
-        local excessive_bindings=0
-        local bindings_info=$(kubectl get clusterrolebindings -o json 2>/dev/null | jq -r '.items[] | select(.roleRef.name=="cluster-admin" or .roleRef.name=="admin" or .roleRef.name=="edit") | "\(.metadata.name) -> \(.roleRef.name)"' 2>/dev/null)
-
-        if [[ -n "$bindings_info" ]]; then
-            # Check if any of these bindings have access to secrets
-            while IFS= read -r binding; do
-                if [[ -n "$binding" ]]; then
-                    excessive_bindings=$((excessive_bindings + 1))
-                fi
-            done <<< "$bindings_info"
-
-            if [[ $excessive_bindings -gt 5 ]]; then
-                print_result "WARN" "Found $excessive_bindings ClusterRoleBindings with potentially excessive secret access" "5.1.2"
-            else
-                print_result "PASS" "ClusterRoleBindings with secret access appear minimal" "5.1.2"
-            fi
-        else
-            print_result "PASS" "No excessive secret access detected in ClusterRoleBindings" "5.1.2"
-        fi
+        # 手动检查项，需要验证对 secrets 的访问权限
+        print_result "WARN" "Secret access permissions require manual verification" "5.1.2"
     }
 
-    # 5.1.3: Minimize wildcard use in Roles and ClusterRoles
+    # 5.1.3: Minimize wildcard use in Roles and ClusterRoles (Manual)
     check_5_1_3() {
-        # Check for wildcard usage in Roles and ClusterRoles
-        local wildcard_roles=0
-        local wildcard_clusterroles=0
-
-        # Check Roles
-        local roles=$(kubectl get roles --all-namespaces -o json 2>/dev/null | jq -r '.items[] | select(.rules[].resources[] == "*" or .rules[].verbs[] == "*") | "\(.metadata.namespace)/\(.metadata.name)"' 2>/dev/null)
-
-        if [[ -n "$roles" ]]; then
-            wildcard_roles=$(echo "$roles" | wc -l)
-        fi
-
-        # Check ClusterRoles
-        local clusterroles=$(kubectl get clusterroles -o json 2>/dev/null | jq -r '.items[] | select(.rules[].resources[] == "*" or .rules[].verbs[] == "*") | .metadata.name' 2>/dev/null)
-
-        if [[ -n "$clusterroles" ]]; then
-            wildcard_clusterroles=$(echo "$clusterroles" | wc -l)
-        fi
-
-        # Exclude system ClusterRoles
-        local system_wildcards=0
-        if [[ -n "$clusterroles" ]]; then
-            system_wildcards=$(echo "$clusterroles" | grep -c "^system:" 2>/dev/null || echo "0")
-        fi
-        wildcard_clusterroles=$((wildcard_clusterroles - system_wildcards))
-
-        if [[ $wildcard_roles -eq 0 && $wildcard_clusterroles -eq 0 ]]; then
-            print_result "PASS" "No wildcard usage found in custom Roles/ClusterRoles" "5.1.3"
-        elif [[ $wildcard_roles -le 2 && $wildcard_clusterroles -le 2 ]]; then
-            print_result "WARN" "Found $wildcard_roles Roles and $wildcard_clusterroles ClusterRoles with wildcards (review)" "5.1.3"
-        else
-            print_result "FAIL" "Found excessive wildcard usage: $wildcard_roles Roles, $wildcard_clusterroles ClusterRoles" "5.1.3"
-        fi
+        # 手动检查项，需要验证 Roles 和 ClusterRoles 中的通配符使用
+        print_result "WARN" "Wildcard usage in Roles and ClusterRoles requires manual verification" "5.1.3"
     }
 
-    # 5.1.4: Minimize access to create pods
+    # 5.1.4: Minimize access to create pods (Manual)
     check_5_1_4() {
-        # Check for Roles/ClusterRoles with pod creation permissions
-        local pod_create_roles=0
-
-        local roles=$(kubectl get roles,clusterroles --all-namespaces -o json 2>/dev/null | jq -r '.items[] | select(.rules[].resources[] == "pods" and (.rules[].verbs[] == "create" or .rules[].verbs[] == "*")) | "\(.kind)/\(.metadata.name)"' 2>/dev/null)
-
-        if [[ -n "$roles" ]]; then
-            pod_create_roles=$(echo "$roles" | wc -l)
-        fi
-
-        # Exclude system roles
-        local system_pod_roles=0
-        if [[ -n "$roles" ]]; then
-            system_pod_roles=$(echo "$roles" | grep -c "^ClusterRole/system:" 2>/dev/null || echo "0")
-        fi
-        pod_create_roles=$((pod_create_roles - system_pod_roles))
-
-        if [[ $pod_create_roles -le 5 ]]; then
-            print_result "PASS" "Pod creation permissions appear minimal ($pod_create_roles custom roles)" "5.1.4"
-        else
-            print_result "WARN" "Found $pod_create_roles roles with pod creation permissions (review)" "5.1.4"
-        fi
+        # 手动检查项，需要验证创建 pods 的访问权限
+        print_result "WARN" "Pod creation access permissions require manual verification" "5.1.4"
     }
 
     #--------------------------------------------------------------------------------
-    #  Section 5.4: Secrets Management
+    #  服务账号检查
     #--------------------------------------------------------------------------------
 
-    # 5.4.1: Ensure that Kubernetes Secret objects are not stored in environment variables
-    check_5_4_1() {
-        local pods_with_secrets=0
-        local total_pods_checked=0
+    # 5.1.5: Ensure that default service accounts are not actively used (Manual)
+    check_5_1_5() {
+        # 手动检查项，需要验证默认服务账号的使用
+        print_result "WARN" "Default service account usage requires manual verification" "5.1.5"
+    }
 
-        # Get all namespaces
-        local namespaces=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
-
-        for ns in $namespaces; do
-            # Skip kube-system namespace
-            if [[ "$ns" == "kube-system" ]]; then
-                continue
-            fi
-
-            # Check pods in this namespace for envFrom with secrets
-            local pod_info=$(kubectl get pods -n "$ns" -o json 2>/dev/null | jq -r '.items[] | select(.spec.containers[].envFrom[]?.secretRef != null or .spec.containers[].env[]?.valueFrom.secretKeyRef != null) | "\(.metadata.namespace)/\(.metadata.name)"' 2>/dev/null)
-
-            if [[ -n "$pod_info" ]]; then
-                while IFS= read -r pod; do
-                    if [[ -n "$pod" ]]; then
-                        pods_with_secrets=$((pods_with_secrets + 1))
-                    fi
-                done <<< "$pod_info"
-            fi
-        done
-
-        if [[ $pods_with_secrets -eq 0 ]]; then
-            print_result "PASS" "No pods found using secrets in environment variables" "5.4.1"
-        elif [[ $pods_with_secrets -le 3 ]]; then
-            print_result "WARN" "Found $pods_with_secrets pods using secrets in environment variables (consider using mounted volumes)" "5.4.1"
-        else
-            print_result "FAIL" "Found $pods_with_secrets pods using secrets in environment variables" "5.4.1"
-        fi
+    # 5.1.6: Ensure that Service Account Tokens are only mounted where necessary (Manual)
+    check_5_1_6() {
+        # 手动检查项，需要验证服务账号令牌的挂载配置
+        print_result "WARN" "Service Account Token mounting requires manual verification" "5.1.6"
     }
 
     #--------------------------------------------------------------------------------
-    #  Section 5.5: Extensible Admission Control
+    #  RBAC 高级权限检查
     #--------------------------------------------------------------------------------
 
-    # 5.5.1: Ensure that the admission control plugin PodSecurityPolicy is set
-    # Note: PSP is deprecated in Kubernetes 1.25+
-    check_5_5_1() {
-        # Check for PodSecurityPolicy or Pod Security Standards
-        local psp_count=$(kubectl get psp -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")
+    # 5.1.7: Avoid use of system:masters group (Manual)
+    check_5_1_7() {
+        # 手动检查项，需要验证 system:masters 组的使用
+        print_result "WARN" "system:masters group usage requires manual verification" "5.1.7"
+    }
 
-        if [[ "$psp_count" -gt 0 ]]; then
-            print_result "PASS" "Pod Security Policies are configured ($psp_count policies)" "5.5.1"
-        else
-            # Check for Pod Security Standards (replacement for PSP)
-            local pss_count=$(kubectl get ns -o json 2>/dev/null | jq -r '[.items[] | select(.metadata.labels."pod-security.kubernetes.io/enforce" != null)] | length' 2>/dev/null || echo "0")
-
-            if [[ "$pss_count" -gt 0 ]]; then
-                print_result "PASS" "Pod Security Standards are configured ($pss_count namespaces with enforcement)" "5.5.1"
-            else
-                print_result "WARN" "No Pod Security Policies or Pod Security Standards found" "5.5.1"
-            fi
-        fi
+    # 5.1.8: Limit use of the Bind, Impersonate and Escalate permissions (Manual)
+    check_5_1_8() {
+        # 手动检查项，需要验证 Bind、Impersonate 和 Escalate 权限的使用
+        print_result "WARN" "Bind/Impersonate/Escalate permissions require manual verification" "5.1.8"
     }
 
     #--------------------------------------------------------------------------------
-    #  Section 5.7: General Security Primitives
+    #  资源访问权限检查
     #--------------------------------------------------------------------------------
 
-    # 5.7.1: Ensure that the security context is configured in your pod definitions
-    check_5_7_1() {
-        local pods_without_context=0
-        local total_pods=0
-
-        local namespaces=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
-
-        for ns in $namespaces; do
-            # Skip system namespaces
-            if [[ "$ns" == "kube-system" ]] || [[ "$ns" == "kube-public" ]]; then
-                continue
-            fi
-
-            # Check pods without security context
-            local pod_count=$(kubectl get pods -n "$ns" -o json 2>/dev/null | jq -r '.items[] | select(.spec.securityContext == null and .spec.containers[].securityContext == null) | .metadata.name' 2>/dev/null | wc -l)
-
-            pods_without_context=$((pods_without_context + pod_count))
-            total_pods=$((total_pods + $(kubectl get pods -n "$ns" -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")))
-        done
-
-        if [[ $pods_without_context -eq 0 ]]; then
-            print_result "PASS" "All pods have security context configured" "5.7.1"
-        elif [[ $pods_without_context -le 3 ]]; then
-            print_result "WARN" "$pods_without_context of $total_pods pods without security context" "5.7.1"
-        else
-            print_result "FAIL" "$pods_without_context of $total_pods pods without security context" "5.7.1"
-        fi
+    # 5.1.9: Minimize access to create persistent volumes (Manual)
+    check_5_1_9() {
+        # 手动检查项，需要验证创建持久卷的访问权限
+        print_result "WARN" "Persistent volume creation access requires manual verification" "5.1.9"
     }
 
-    # 5.7.2: Ensure that the seccomp profile is set in your pod definitions
-    check_5_7_2() {
-        local pods_with_seccomp=0
-        local total_pods=0
-
-        local namespaces=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
-
-        for ns in $namespaces; do
-            # Skip system namespaces
-            if [[ "$ns" == "kube-system" ]] || [[ "$ns" == "kube-public" ]]; then
-                continue
-            fi
-
-            # Check pods with seccomp profile
-            local pod_count=$(kubectl get pods -n "$ns" -o json 2>/dev/null | jq -r '.items[] | select(.spec.securityContext != null and (.spec.securityContext.seccompProfile != null or .spec.containers[].securityContext.seccompProfile != null)) | .metadata.name' 2>/dev/null | wc -l)
-
-            pods_with_seccomp=$((pods_with_seccomp + pod_count))
-            total_pods=$((total_pods + $(kubectl get pods -n "$ns" -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")))
-        done
-
-        if [[ $pods_with_seccomp -gt 0 ]]; then
-            print_result "PASS" "$pods_with_seccomp of $total_pods pods have seccomp profile configured" "5.7.2"
-        else
-            print_result "WARN" "No pods with seccomp profile found" "5.7.2"
-        fi
+    # 5.1.10: Minimize access to the proxy sub-resource of nodes (Manual)
+    check_5_1_10() {
+        # 手动检查项，需要验证 nodes proxy 子资源的访问权限
+        print_result "WARN" "Node proxy sub-resource access requires manual verification" "5.1.10"
     }
 
-    # 5.7.3: Ensure that the admission control plugin SecurityContextDeny is set
-    # Note: This plugin is deprecated in favor of Pod Security Standards
-    check_5_7_3() {
-        local apiserver_process=$(get_apiserver_args)
+    # 5.1.11: Minimize access to the approval sub-resource of certificatesigningrequests objects (Manual)
+    check_5_1_11() {
+        # 手动检查项，需要验证 certificatesigningrequests approval 子资源的访问权限
+        print_result "WARN" "CSR approval sub-resource access requires manual verification" "5.1.11"
+    }
 
-        if check_admission_plugin "SecurityContextDeny" "$apiserver_process"; then
-            print_result "PASS" "SecurityContextDeny admission plugin is set" "5.7.3"
-        else
-            # Check for Pod Security Standards instead (replacement)
-            local pss_count=$(kubectl get ns -o json 2>/dev/null | jq -r '[.items[] | select(.metadata.labels."pod-security.kubernetes.io/enforce" != null)] | length' 2>/dev/null || echo "0")
+    # 5.1.12: Minimize access to webhook configuration objects (Manual)
+    check_5_1_12() {
+        # 手动检查项，需要验证 webhook 配置对象的访问权限
+        print_result "WARN" "Webhook configuration access requires manual verification" "5.1.12"
+    }
 
-            if [[ "$pss_count" -gt 0 ]]; then
-                print_result "PASS" "Pod Security Standards configured (SecurityContextDeny deprecated)" "5.7.3"
-            else
-                print_result "WARN" "SecurityContextDeny not set and no Pod Security Standards found" "5.7.3"
-            fi
-        fi
+    # 5.1.13: Minimize access to the service account token creation (Manual)
+    check_5_1_13() {
+        # 手动检查项，需要验证服务账号令牌创建的访问权限
+        print_result "WARN" "Service account token creation access requires manual verification" "5.1.13"
     }
 
     #--------------------------------------------------------------------------------
-    #  Section 5.8: Network Policies and Segmentation
+    #  执行所有 Section 5.1 检查项
     #--------------------------------------------------------------------------------
-
-    # 5.8.1: Ensure namespaces have network policies defined (enhanced check)
-    check_5_8_1() {
-        local namespaces_with_policy=0
-        local namespaces_without_policy=0
-        local total_namespaces=0
-
-        local namespaces=$(kubectl get namespaces -o jsonpath='{.items[*].metadata.name}' 2>/dev/null)
-
-        for ns in $namespaces; do
-            # Skip system namespaces that don't need policies
-            if [[ "$ns" == "kube-system" ]] || [[ "$ns" == "kube-public" ]] || [[ "$ns" == "kube-node-lease" ]]; then
-                continue
-            fi
-
-            total_namespaces=$((total_namespaces + 1))
-            local policy_count=$(kubectl get networkpolicy -n "$ns" -o json 2>/dev/null | jq '.items | length' 2>/dev/null || echo "0")
-
-            if [[ "$policy_count" -gt 0 ]]; then
-                namespaces_with_policy=$((namespaces_with_policy + 1))
-            else
-                namespaces_without_policy=$((namespaces_without_policy + 1))
-            fi
-        done
-
-        if [[ $namespaces_without_policy -eq 0 ]]; then
-            print_result "PASS" "All namespaces ($total_namespaces) have network policies" "5.8.1"
-        elif [[ $namespaces_with_policy -gt $namespaces_without_policy ]]; then
-            print_result "WARN" "$namespaces_with_policy/$total_namespaces namespaces have network policies" "5.8.1"
-        else
-            print_result "FAIL" "$namespaces_without_policy/$total_namespaces namespaces lack network policies" "5.8.1"
-        fi
-    }
-
-    # Execute all section 5 checks
-    check_5_1
-    check_5_2
-    check_5_3
-    check_5_4
-    check_5_5
-    check_5_6
-    # Additional enhanced checks
+    check_5_1_1
     check_5_1_2
     check_5_1_3
     check_5_1_4
+    check_5_1_5
+    check_5_1_6
+    check_5_1_7
+    check_5_1_8
+    check_5_1_9
+    check_5_1_10
+    check_5_1_11
+    check_5_1_12
+    check_5_1_13
+}
+
+#-----------------------------#
+#  Section 5.2: Kubernetes Policies
+#-----------------------------#
+
+run_section_5_2_checks() {
+    echo -e "\n${BLUE}=================================================${NC}"
+    echo -e "${BLUE}Section 5.2 - Kubernetes Policies${NC}"
+    echo -e "${BLUE}=================================================${NC}\n"
+
+    # Check if kubectl is available
+    if ! command -v kubectl &> /dev/null; then
+        print_result "WARN" "kubectl not found. Skipping policy checks." "5.2.x"
+        return
+    fi
+
+    # Check if we can connect to the cluster
+    if ! kubectl get nodes &> /dev/null; then
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping policy checks." "5.2.x"
+        return
+    fi
+
+    #--------------------------------------------------------------------------------
+    #  Pod 安全策略检查
+    #--------------------------------------------------------------------------------
+
+    # 5.2.1: Ensure that the cluster has at least one active policy control mechanism in place (Manual)
+    check_5_2_1() {
+        # 手动检查项，需要验证策略控制机制（Pod Security Standards 或 PSP）
+        print_result "WARN" "Policy control mechanism requires manual verification" "5.2.1"
+    }
+
+    # 5.2.2: Minimize the admission of privileged containers (Manual)
+    check_5_2_2() {
+        # 手动检查项，需要验证特权容器的准入控制
+        print_result "WARN" "Privileged container admission control requires manual verification" "5.2.2"
+    }
+
+    # 5.2.3: Minimize the admission of containers wishing to share the host process ID namespace (Manual)
+    check_5_2_3() {
+        # 手动检查项，需要验证 hostPID 容器的准入控制
+        print_result "WARN" "Host process ID namespace sharing requires manual verification" "5.2.3"
+    }
+
+    # 5.2.4: Minimize the admission of containers wishing to share the host IPC namespace (Manual)
+    check_5_2_4() {
+        # 手动检查项，需要验证 hostIPC 容器的准入控制
+        print_result "WARN" "Host IPC namespace sharing requires manual verification" "5.2.4"
+    }
+
+    # 5.2.5: Minimize the admission of containers wishing to share the host network namespace (Manual)
+    check_5_2_5() {
+        # 手动检查项，需要验证 hostNetwork 容器的准入控制
+        print_result "WARN" "Host network namespace sharing requires manual verification" "5.2.5"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  容器权限检查
+    #--------------------------------------------------------------------------------
+
+    # 5.2.6: Minimize the admission of containers with allowPrivilegeEscalation (Manual)
+    check_5_2_6() {
+        # 手动检查项，需要验证 allowPrivilegeEscalation 的准入控制
+        print_result "WARN" "allowPrivilegeEscalation admission control requires manual verification" "5.2.6"
+    }
+
+    # 5.2.7: Minimize the admission of root containers (Manual)
+    check_5_2_7() {
+        # 手动检查项，需要验证 root 容器的准入控制
+        print_result "WARN" "Root container admission control requires manual verification" "5.2.7"
+    }
+
+    # 5.2.8: Minimize the admission of containers with the NET_RAW capability (Manual)
+    check_5_2_8() {
+        # 手动检查项，需要验证 NET_RAW 能力的准入控制
+        print_result "WARN" "NET_RAW capability admission control requires manual verification" "5.2.8"
+    }
+
+    # 5.2.9: Minimize the admission of containers with capabilities assigned (Manual)
+    check_5_2_9() {
+        # 手动检查项，需要验证容器能力的准入控制
+        print_result "WARN" "Container capabilities admission control requires manual verification" "5.2.9"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  特殊容器类型检查
+    #--------------------------------------------------------------------------------
+
+    # 5.2.10: Minimize the admission of Windows HostProcess Containers (Manual)
+    check_5_2_10() {
+        # 手动检查项，需要验证 Windows HostProcess 容器的准入控制
+        print_result "WARN" "Windows HostProcess container admission control requires manual verification" "5.2.10"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  存储和网络检查
+    #--------------------------------------------------------------------------------
+
+    # 5.2.11: Minimize the admission of HostPath volumes (Manual)
+    check_5_2_11() {
+        # 手动检查项，需要验证 HostPath 卷的准入控制
+        print_result "WARN" "HostPath volume admission control requires manual verification" "5.2.11"
+    }
+
+    # 5.2.12: Minimize the admission of containers which use HostPorts (Manual)
+    check_5_2_12() {
+        # 手动检查项，需要验证 HostPorts 的准入控制
+        print_result "WARN" "HostPorts admission control requires manual verification" "5.2.12"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 5.2 检查项
+    #--------------------------------------------------------------------------------
+    check_5_2_1
+    check_5_2_2
+    check_5_2_3
+    check_5_2_4
+    check_5_2_5
+    check_5_2_6
+    check_5_2_7
+    check_5_2_8
+    check_5_2_9
+    check_5_2_10
+    check_5_2_11
+    check_5_2_12
+}
+
+#-----------------------------#
+#  Section 5.3: Network Policies and CNI
+#-----------------------------#
+
+run_section_5_3_checks() {
+    echo -e "\n${BLUE}=================================================${NC}"
+    echo -e "${BLUE}Section 5.3 - Network Policies and CNI${NC}"
+    echo -e "${BLUE}=================================================${NC}\n"
+
+    # Check if kubectl is available
+    if ! command -v kubectl &> /dev/null; then
+        print_result "WARN" "kubectl not found. Skipping network policy checks." "5.3.x"
+        return
+    fi
+
+    # Check if we can connect to the cluster
+    if ! kubectl get nodes &> /dev/null; then
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping network policy checks." "5.3.x"
+        return
+    fi
+
+    #--------------------------------------------------------------------------------
+    #  网络策略检查
+    #--------------------------------------------------------------------------------
+
+    # 5.3.1: Ensure that the CNI in use supports Network Policies (Manual)
+    check_5_3_1() {
+        # 手动检查项，需要验证 CNI 插件是否支持网络策略
+        print_result "WARN" "CNI Network Policy support requires manual verification" "5.3.1"
+    }
+
+    # 5.3.2: Ensure that all Namespaces have Network Policies defined (Manual)
+    check_5_3_2() {
+        # 手动检查项，需要验证所有命名空间是否定义了网络策略
+        print_result "WARN" "Network Policies definition requires manual verification" "5.3.2"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 5.3 检查项
+    #--------------------------------------------------------------------------------
+    check_5_3_1
+    check_5_3_2
+}
+
+#-----------------------------#
+#  Section 5.4: Secrets Management
+#-----------------------------#
+
+run_section_5_4_checks() {
+    echo -e "\n${BLUE}=================================================${NC}"
+    echo -e "${BLUE}Section 5.4 - Secrets Management${NC}"
+    echo -e "${BLUE}=================================================${NC}\n"
+
+    # Check if kubectl is available
+    if ! command -v kubectl &> /dev/null; then
+        print_result "WARN" "kubectl not found. Skipping secrets management checks." "5.4.x"
+        return
+    fi
+
+    # Check if we can connect to the cluster
+    if ! kubectl get nodes &> /dev/null; then
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping secrets management checks." "5.4.x"
+        return
+    fi
+
+    #--------------------------------------------------------------------------------
+    #  Secrets 管理检查
+    #--------------------------------------------------------------------------------
+
+    # 5.4.1: Prefer using secrets as files over secrets as environment variables (Manual)
+    check_5_4_1() {
+        # 手动检查项，需要验证 secrets 的使用方式
+        print_result "WARN" "Secrets usage (files vs environment variables) requires manual verification" "5.4.1"
+    }
+
+    # 5.4.2: Consider external secret storage (Manual)
+    check_5_4_2() {
+        # 手动检查项，需要验证外部 secret 存储的使用
+        print_result "WARN" "External secret storage requires manual verification" "5.4.2"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 5.4 检查项
+    #--------------------------------------------------------------------------------
     check_5_4_1
+    check_5_4_2
+}
+
+#-----------------------------#
+#  Section 5.5: Extensible Admission Control
+#-----------------------------#
+
+run_section_5_5_checks() {
+    echo -e "\n${BLUE}=================================================${NC}"
+    echo -e "${BLUE}Section 5.5 - Extensible Admission Control${NC}"
+    echo -e "${BLUE}=================================================${NC}\n"
+
+    # Check if kubectl is available
+    if ! command -v kubectl &> /dev/null; then
+        print_result "WARN" "kubectl not found. Skipping admission control checks." "5.5.x"
+        return
+    fi
+
+    # Check if we can connect to the cluster
+    if ! kubectl get nodes &> /dev/null; then
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping admission control checks." "5.5.x"
+        return
+    fi
+
+    #--------------------------------------------------------------------------------
+    #  准入控制检查
+    #--------------------------------------------------------------------------------
+
+    # 5.5.1: Configure Image Provenance using ImagePolicyWebhook admission controller (Manual)
+    check_5_5_1() {
+        # 手动检查项，需要验证 ImagePolicyWebhook 准入控制器的配置
+        print_result "WARN" "ImagePolicyWebhook configuration requires manual verification" "5.5.1"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 5.5 检查项
+    #--------------------------------------------------------------------------------
     check_5_5_1
-    check_5_7_1
-    check_5_7_2
-    check_5_7_3
-    check_5_8_1
+}
+
+#-----------------------------#
+#  Section 5.6: General Policies
+#-----------------------------#
+
+run_section_5_6_checks() {
+    echo -e "\n${BLUE}=================================================${NC}"
+    echo -e "${BLUE}Section 5.6 - General Policies${NC}"
+    echo -e "${BLUE}=================================================${NC}\n"
+
+    # Check if kubectl is available
+    if ! command -v kubectl &> /dev/null; then
+        print_result "WARN" "kubectl not found. Skipping general policy checks." "5.6.x"
+        return
+    fi
+
+    # Check if we can connect to the cluster
+    if ! kubectl get nodes &> /dev/null; then
+        print_result "WARN" "Cannot connect to Kubernetes cluster. Skipping general policy checks." "5.6.x"
+        return
+    fi
+
+    #--------------------------------------------------------------------------------
+    #  通用策略检查
+    #--------------------------------------------------------------------------------
+
+    # 5.6.1: Create administrative boundaries between resources using namespaces (Manual)
+    check_5_6_1() {
+        # 手动检查项，需要验证命名空间的使用
+        print_result "WARN" "Namespace separation requires manual verification" "5.6.1"
+    }
+
+    # 5.6.2: Ensure that the seccomp profile is set to docker/default in your pod definitions (Manual)
+    check_5_6_2() {
+        # 手动检查项，需要验证 seccomp profile 的配置
+        print_result "WARN" "seccomp profile configuration requires manual verification" "5.6.2"
+    }
+
+    # 5.6.3: Apply Security Context to Your Pods and Containers (Manual)
+    check_5_6_3() {
+        # 手动检查项，需要验证 Security Context 的应用
+        print_result "WARN" "Security Context application requires manual verification" "5.6.3"
+    }
+
+    # 5.6.4: The default namespace should not be used (Manual)
+    check_5_6_4() {
+        # 手动检查项，需要验证默认命名空间的使用
+        print_result "WARN" "Default namespace usage requires manual verification" "5.6.4"
+    }
+
+    #--------------------------------------------------------------------------------
+    #  执行所有 Section 5.6 检查项
+    #--------------------------------------------------------------------------------
+    check_5_6_1
+    check_5_6_2
+    check_5_6_3
+    check_5_6_4
 }
 
 #-----------------------------#
